@@ -36,14 +36,15 @@ AppAsset::register($this);
         ],
     ]);
     $menuItems = [
-        ['label' => 'Home', 'url' => ['/site/index']],
-        ['label' => 'About', 'url' => ['/site/about']],
-        ['label' => 'Contact', 'url' => ['/site/contact']],
+        // ['label' => 'About', 'url' => ['/site/about']],
+        // ['label' => 'Contact', 'url' => ['/site/contact']],
     ];
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Signup', 'url' => ['/site/signup']];
         $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
     } else {
+        // $menuItems[] = ['label' => 'Data Pelamar', 'url' => ['/responden/update']];
+        
         $menuItems[] = '<li>'
             . Html::beginForm(['/site/logout'], 'post')
             . Html::submitButton(
@@ -52,6 +53,7 @@ AppAsset::register($this);
             )
             . Html::endForm()
             . '</li>';
+
     }
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
@@ -73,7 +75,6 @@ AppAsset::register($this);
     <div class="container">
         <p class="pull-left">&copy; <?= Html::encode(Yii::$app->name) ?> <?= date('Y') ?></p>
 
-        <p class="pull-right"><?= Yii::powered() ?></p>
     </div>
 </footer>
 

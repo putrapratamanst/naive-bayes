@@ -10,10 +10,12 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use common\models\LoginForm;
+use Exception;
 use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
 use frontend\models\ContactForm;
+use frontend\models\Responden;
 
 /**
  * Site controller
@@ -74,6 +76,16 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+        if (Yii::$app->user->isGuest) {
+            return $this->redirect('site/login');
+        }
+        $responden = Responden::find()->where(['nama' => Yii::$app->user->identity->username])->one();
+        if (!$responden) {
+            throw new \yii\web\NotFoundHttpException("You Cannot Access This Page!");
+        }
+
+        return $this->redirect(['/responden/view', 'id' => $responden->id]);
+
         return $this->render('index');
     }
 
@@ -84,13 +96,23 @@ class SiteController extends Controller
      */
     public function actionLogin()
     {
+
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+            $post = Yii::$app->request->post();
+            $loginForm = $post['LoginForm'];
+
+            $responden = Responden::find()->where(['nama' => $loginForm['username']])->one();
+            if(!$responden){
+                    throw new \yii\web\NotFoundHttpException("You Cannot Access This Page!");
+            }
+            return $this->redirect(['/responden/view', 'id' => $responden->id]);
+
+            // return $this->goBack();
         } else {
             $model->password = '';
 
@@ -152,10 +174,34 @@ class SiteController extends Controller
      */
     public function actionSignup()
     {
+        $connection = \Yii::$app->db;
+
+        $transaction = $connection->beginTransaction();
         $model = new SignupForm();
-        if ($model->load(Yii::$app->request->post()) && $model->signup()) {
-            Yii::$app->session->setFlash('success', 'Thank you for registration. Please check your inbox for verification email.');
-            return $this->goHome();
+        $responden = new Responden();
+
+        try {
+            if ($model->load(Yii::$app->request->post())) {
+                $post = Yii::$app->request->post();
+                $dataSignup  = $post['SignupForm'];
+
+                $responden->nama = $dataSignup['username'];
+                $responden->email = $dataSignup['email'];
+
+                if(!$responden->save()){
+                    return json_encode($responden->errors);
+                }
+                
+                $model->signup();
+                $transaction->commit();
+
+                Yii::$app->session->setFlash('success', 'Thank you for registration. Please Login.');
+                return $this->goHome();
+            }
+
+        } catch (\Exception $e) {
+            $transaction->rollback();
+            throw new Exception("gagal save");
         }
 
         return $this->render('signup', [
