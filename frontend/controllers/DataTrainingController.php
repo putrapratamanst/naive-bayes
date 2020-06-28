@@ -7,7 +7,9 @@ use Yii;
 use frontend\models\DataTraining;
 use frontend\models\DataTrainingSearch;
 use frontend\models\Parameter;
+use frontend\models\Pilihan;
 use frontend\models\Responden;
+use frontend\models\Soal;
 use yii\data\ArrayDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -32,7 +34,11 @@ class DataTrainingController extends Controller
             ],
         ];
     }
-
+    public function beforeAction($action)
+    {
+        $this->enableCsrfValidation = false;
+        return parent::beforeAction($action);
+    }
     /**
      * Lists all DataTraining models.
      * @return mixed
@@ -238,5 +244,124 @@ class DataTrainingController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function actionCreatePsikotes()
+    {
+        Yii::$app->controller->enableCsrfValidation = false;
+
+        $request = Yii::$app->request;
+        $idResponden = $request->get('id');
+
+        $soal = Soal::find()->where(['type' => 1])->asArray()->all();
+        return $this->render('form_psikotes', [
+            'soal' => $soal,
+            'idResponden' => $idResponden,
+            'judulTes'=> "PSIKOTES",
+            'action'=> "/data-training/proses-psikotes/"
+        ]);
+    }
+
+    public function actionProsesPsikotes()
+    {
+        Yii::$app->controller->enableCsrfValidation = false;
+
+        $post = Yii::$app->request->post();
+       
+        $idResponden = $post['idResponden'];
+ 
+        $pilihan = isset($post['pilihan']) ? $post['pilihan'] : [];
+        if(count($pilihan) < 10){
+            Yii::$app->session->setFlash('danger', "Anda belum menyelesaikan Psikotes!");
+            return $this->redirect(['create-psikotes', 'id' => $idResponden]);
+        }
+
+        $hasilPsikotes = 0;
+        foreach ($pilihan as $key => $pilihans) {
+            $salahBenar = Pilihan::find()
+                ->select('benar_salah')
+                ->where(['id_soal' => $key])
+                ->andWhere(['pilihan' => $pilihans])
+                ->asArray()
+                ->one();
+
+            if($salahBenar['benar_salah'] == 1){
+                $hasilPsikotes = $hasilPsikotes + 10;
+            }
+        }
+
+        $dataTraining = DataTraining::find()
+            ->where(['id_responden' => $idResponden])
+            ->andWhere((['id_attribute' => 5]))
+            ->one();
+        if($hasilPsikotes > 50){
+            $dataTraining->id_parameter = 14;
+            $dataTraining->save(false);
+        } else {
+            $dataTraining->id_parameter = 13;
+            $dataTraining->save(false);
+        }
+
+        return $this->redirect(['view', 'id' => $idResponden]);
+
+    }
+
+    public function actionCreateIq()
+    {
+        Yii::$app->controller->enableCsrfValidation = false;
+
+        $request = Yii::$app->request;
+        $idResponden = $request->get('id');
+
+        $soal = Soal::find()->where(['type' => 2])->asArray()->all();
+        return $this->render('form_psikotes', [
+            'soal' => $soal,
+            'idResponden' => $idResponden,
+            'judulTes' => "TEST IQ",
+            'action' => "/data-training/proses-iq/"
+        ]);
+    }
+
+    public function actionProsesIq()
+    {
+        Yii::$app->controller->enableCsrfValidation = false;
+
+        $post = Yii::$app->request->post();
+
+        $idResponden = $post['idResponden'];
+
+        $pilihan = isset($post['pilihan']) ? $post['pilihan'] : [];
+        if (count($pilihan) < 10) {
+            Yii::$app->session->setFlash('danger', "Anda belum menyelesaikan Psikotes!");
+            return $this->redirect(['create-psikotes', 'id' => $idResponden]);
+        }
+
+        $hasilPsikotes = 0;
+        foreach ($pilihan as $key => $pilihans) {
+            $salahBenar = Pilihan::find()
+                ->select('benar_salah')
+                ->where(['id_soal' => $key])
+                ->andWhere(['pilihan' => $pilihans])
+                ->asArray()
+                ->one();
+
+            if ($salahBenar['benar_salah'] == 1) {
+                $hasilPsikotes = $hasilPsikotes + 10;
+            }
+        }
+
+        $dataTraining = DataTraining::find()
+            ->where(['id_responden' => $idResponden])
+            ->andWhere((['id_attribute' => 6]))
+            ->one();
+        if ($hasilPsikotes > 50) {
+            $dataTraining->id_parameter = 15;
+            $dataTraining->save(false);
+        } else {
+            $dataTraining->id_parameter = 16;
+            $dataTraining->save(false);
+        }
+
+        return $this->redirect(['view', 'id' => $idResponden]);
     }
 }

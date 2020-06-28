@@ -4,6 +4,8 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use dosamigos\datepicker\DatePicker;
 
+$baseUrl = Yii::getAlias('@frontend/web');
+
 /* @var $this yii\web\View */
 /* @var $model frontend\models\Responden */
 /* @var $form yii\widgets\ActiveForm */
@@ -36,12 +38,66 @@ use dosamigos\datepicker\DatePicker;
     ); ?>
     <?= $form->field($model, 'no_telepon')->textInput(['maxlength' => true]) ?>
 
+
     <?= $form->field($model, 'cv')->fileInput() ?>
+
+
+    <?php
+
+    if ($model->cv) {
+        $cv = str_replace($baseUrl, "", $model->cv);
+
+        echo Html::a(
+            'Lihat CV',
+            $cv,
+            [
+                'title' => 'Go!',
+                'target' => '_blank'
+            ]
+        );
+    }
+    ?>
+
+
+    <hr class="new5">
 
     <?= $form->field($model, 'portofolio')->fileInput() ?>
 
+    <?php
+
+    if ($model->portofolio) {
+        $portofolio = str_replace($baseUrl, "", $model->portofolio);
+
+        echo Html::a(
+            'Lihat Portofolio',
+            $portofolio,
+            [
+                'title' => 'Go!',
+                'target' => '_blank'
+            ]
+        );
+    }
+    ?>
+
+    <hr class="new5">
+
     <?= $form->field($model, 'ijazah')->fileInput() ?>
 
+    <?php
+
+    if ($model->ijazah) {
+        $ijazah = str_replace($baseUrl, "", $model->ijazah);
+
+        echo Html::a(
+            'Lihat Ijazah',
+            $ijazah,
+            [
+                'title' => 'Go!',
+                'target' => '_blank'
+            ]
+        );
+    }
+    ?>
 
 
     <div class="form-group">
@@ -53,3 +109,8 @@ use dosamigos\datepicker\DatePicker;
     <?php ActiveForm::end(); ?>
 
 </div>
+<style>
+    hr.new5 {
+        border-top: 1px dashed red;
+    }
+</style>

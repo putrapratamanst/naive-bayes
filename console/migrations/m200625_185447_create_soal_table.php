@@ -105,11 +105,7 @@ class m200625_185447_create_soal_table extends Migration
             "type" => "2",
         ]);
 
-        $this->insert("soal", [
-            "pertanyaan" => "Manakah dari bilangan-bilangan berikut ini yang sesuai dengan urutan di bawah ini?",
-            "type" => "2",
-        ]);
-
+  
         $this->insert("soal", [
             "pertanyaan" => "Manakah dari bilangan-bilangan berikut ini yang sesuai dengan urutan di bawah ini?
 _ _ _ , 281, 435, 634, 923, 573, 312, 421, 233, 315, 361, _ _ _",

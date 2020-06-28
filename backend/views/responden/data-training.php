@@ -4,11 +4,11 @@
         <th>Responden</th>
         <?php
         //-- menampilkan header table
-        for ($i = 1; $i <= $jml_atribut; $i++) {
+        for ($i = 2; $i <= $jml_atribut; $i++) {
             echo "<th>{$atribut[$i]}</th>";
         }
-
         ?>
+        <th><?php echo $atribut[1]; ?></th>
     </tr>
     <?php
     //-- menampilkan data secara literal
@@ -23,6 +23,41 @@
 </table>
 
 
+<?php
+//-- menyiapkan variable penampung utk freq tiap atribut berupa array $freq
+$freq = array();
+//-- inisialisasi data awal $freq
+for ($i = 2; $i <= $jml_atribut; $i++) {
+    for ($j = 0; $j < 3; $j++) {
+        for ($k = 0; $k < 3; $k++) {
+            $freq[$i][$j][$k] = 0;
+        }
+    }
+}
+//-- menyiapkan variable penampung utk freq prior berupa array $prior_freq
+$prior_freq = array();
+//-- iterasi tiap data training
+foreach ($data as $i => $v) {
+    //-- hitung freq tiap atribut
+    for ($j = 2; $j <= $jml_atribut; $j++) {
+        $freq[$j][$v[$j]][$v[1]] += 1;
+    }
+    //-- hitung feq prior/kelas
+    if (!isset($prior_freq[$v[1]])) $prior_freq[$v[1]] = 0;
+    $prior_freq[$v[1]] += 1;
+}
+ksort($prior_freq);
+//-- menampilkan tabel frekuensi/jumlah data kelas
+?>
+<table border='1'>
+    <caption>TABEL 2 : Jumlah Data Kelas <?php echo $atribut[1]; ?></caption>
+    <tr><?php foreach ($parameter[1] as $nilai => $param) {
+            echo "<th>{$param}</th>";
+        } ?></tr>
+    <tr><?php foreach ($prior_freq as $nilai => $nfreq) {
+            echo "<td>{$nfreq}</td>";
+        } ?></tr>
+</table>
 <?php
 //-- menampilkan tabel frekuensi/jumlah data tiap atribut
 for ($i = 2; $i <= $jml_atribut; $i++) {
@@ -47,7 +82,6 @@ for ($i = 2; $i <= $jml_atribut; $i++) {
     echo "</table>";
 }
 ?>
-
 
 <?php
 //-- menyiapkan variable penampung untuk class probabilities $prior
@@ -109,6 +143,7 @@ for ($i = 2; $i <= $jml_atribut; $i++) {
 }
 ?>
 
+
 <?php
 //-- menyiapkan variabel penampung probabilitas per data training thd kelas
 $prob = array();
@@ -139,6 +174,8 @@ echo "Correctly Classified Instance = " . ($right / count($data) * 100) . "% <br
 //-- menampilkan prosentase data training yg diprediksi tidak benar
 echo "Incorrectly Classified Instance = " . ((1 - $right / count($data)) * 100) . "% <br>";
 ?>
+
+
 
 <?php
 //-- menyiapkan variabel penampung data inputan
