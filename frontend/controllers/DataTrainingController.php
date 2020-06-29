@@ -355,10 +355,10 @@ class DataTrainingController extends Controller
             ->andWhere((['id_attribute' => 6]))
             ->one();
         if ($hasilPsikotes > 50) {
-            $dataTraining->id_parameter = 15;
+            $dataTraining->id_parameter = 16;
             $dataTraining->save(false);
         } else {
-            $dataTraining->id_parameter = 16;
+            $dataTraining->id_parameter = 15;
             $dataTraining->save(false);
         }
 

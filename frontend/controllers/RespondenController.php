@@ -146,13 +146,13 @@ class RespondenController extends Controller
                     $y = $today->diff($birthDate)->y;
                     $umur = "";
                     switch (true) {
-                        case $y <=19 :
+                        case ($y >=19 && $y <= 24) :
                             $umur = 1;
                             break;
-                        case ($y >=19 && $y <= 24) :
+                        case ($y >=25 && $y <= 30) :
                             $umur = 2;
                             break;
-                        case $y >= 24:
+                        case $y >= 30:
                             $umur = 3;
                             break;
                         
