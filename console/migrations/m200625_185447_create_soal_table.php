@@ -24,17 +24,18 @@ class m200625_185447_create_soal_table extends Migration
         ]);
 
         $this->insert("soal", [
+            "pertanyaan" => "Bongsor =…",
+            "type" => "1",
+        ]);
+
+
+        $this->insert("soal", [
             "pertanyaan" => "Mobil – Bensin = Pelari - …",
             "type" => "1",
         ]);
 
         $this->insert("soal", [
             "pertanyaan" => "1 24 20 16 = …",
-            "type" => "1",
-        ]);
-
-        $this->insert("soal", [
-            "pertanyaan" => "Bongsor =…",
             "type" => "1",
         ]);
 
