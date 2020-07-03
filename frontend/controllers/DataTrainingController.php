@@ -6,6 +6,7 @@ use frontend\models\Attributes;
 use Yii;
 use frontend\models\DataTraining;
 use frontend\models\DataTrainingSearch;
+use frontend\models\Jawaban;
 use frontend\models\Parameter;
 use frontend\models\Pilihan;
 use frontend\models\Responden;
@@ -284,7 +285,17 @@ class DataTrainingController extends Controller
                 ->andWhere(['pilihan' => $pilihans])
                 ->asArray()
                 ->one();
-
+            $jawaban = new Jawaban();
+            $jawaban->id_responden = $idResponden;
+            $jawaban->id_soal = $key;
+            $jawaban->type = 1;
+            $jawaban->jawaban = $pilihans;
+            $jawaban->benar_salah = $salahBenar['benar_salah'];
+            if (!$jawaban->save()) {
+                echo "<pre>";
+                print_r($jawaban->errors);
+                die;
+            }
             if($salahBenar['benar_salah'] == 1){
                 $hasilPsikotes = $hasilPsikotes + 10;
             }
@@ -344,7 +355,15 @@ class DataTrainingController extends Controller
                 ->andWhere(['pilihan' => $pilihans])
                 ->asArray()
                 ->one();
-
+            $jawaban = new Jawaban();
+            $jawaban->id_responden = $idResponden;
+            $jawaban->id_soal = $key;
+            $jawaban->type = 2;
+            $jawaban->jawaban = $pilihans;
+            $jawaban->benar_salah = $salahBenar['benar_salah'];
+            if(!$jawaban->save()){
+                echo"<pre>";print_r($jawaban->errors);die;
+            }
             if ($salahBenar['benar_salah'] == 1) {
                 $hasilPsikotes = $hasilPsikotes + 10;
             }

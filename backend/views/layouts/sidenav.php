@@ -30,6 +30,9 @@ $user = Yii::$app->user->identity;
                     <h3>Menu</h3>
                     <ul class="nav side-menu">
                         <li><a href="/responden"><i class="fa fa-list"></i> Data Responden </a></li>
+                        <li><a href="/attributes"><i class="fa fa-pencil"></i> Data Attribute </a></li>
+                        <li><a href="/parameter"><i class="fa fa-gear"></i> Data Parameter </a></li>
+                        <li><a href="/soal"><i class="fa fa-eye"></i> Data Soal </a></li>
                         <!-- 
                         <li><a href="/delivery/create"><i class="fa fa-pencil"></i> INPUT KIRIMAN </a></li>
                         <li><a href="/delivery/export"><i class="fa fa-print"></i> LAPORAN </a></li>
