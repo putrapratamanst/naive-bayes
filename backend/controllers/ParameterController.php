@@ -124,4 +124,22 @@ class ParameterController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
+    public function actionList()
+    {
+        $parameter = [];
+        $list = Parameter::find()->asArray()->all();
+        $idAtribut = 0;
+        foreach ($list as $value) {
+            if ($idAtribut != $value['id_attribute']) {
+
+                $parameter[$value['id_attribute']] = array();
+                $idAtribut = $value['id_attribute'];
+            }
+
+            $parameter[$value['id_attribute']][$value['value']] = $value['parameter_name'];
+        }
+        return $parameter;
+    }
+
 }

@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\models\DataTraining;
 use Yii;
 use backend\models\Responden;
 use backend\models\RespondenSearch;
@@ -169,19 +170,19 @@ class RespondenController extends Controller
        
         $result = Yii::$app->db2->createCommand('SELECT * FROM nbc_data a JOIN nbc_responden b USING(id_responden) ORDER BY a.id_data')->queryAll();
 
-
         //attribute
         $dataAttribute = Yii::$app->db2->createCommand('SELECT * FROM nbc_atribut')->queryAll();
         $atribut = array();
 
         foreach ($dataAttribute as $row) {
             $atribut[$row['id_atribut']] = $row['atribut'];
+            
         }
-        
         
         
         //parameter
         $dataParameter = Yii::$app->db2->createCommand('SELECT * FROM nbc_parameter ORDER BY id_atribut,id_parameter')->queryAll();
+
         $parameter = array();
         $id_atribut = 0;
 
@@ -209,6 +210,8 @@ class RespondenController extends Controller
             }
             $data[$row['id_responden']][$row['id_atribut']] = $row['id_parameter'];
         }
+        die(json_encode($result));
+
     
         // $this->layout = "main-old";
         return $this->render('data-training', [
@@ -219,5 +222,28 @@ class RespondenController extends Controller
             'responden' => $responden,
 
         ]);
+    }
+
+    public function actionDataTraining()
+    {
+        $list = DataTraining::find()->select(['id_attribute' , 'id_responden', 'id_parameter','responden.nama '])->joinWith('responden')->asArray()->all();
+
+        //responden
+        $data = array();
+        $responden = array();
+        $id_responden = 0;
+
+        //-- melakukan iterasi pengisian array untuk tiap record data yang didapat
+        foreach ($list as $row) {
+
+            if ($id_responden != $row['id_responden']) {
+                $responden[$row['id_responden']] = $row['responden'];
+                $data[$row['id_responden']] = array();
+                $id_responden = $row['id_responden'];
+            }
+            $data[$row['id_responden']][$row['id_attribute']] = $row['id_parameter'];
+        }
+        
+        return $data;
     }
 }

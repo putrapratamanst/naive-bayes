@@ -16,9 +16,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <h1><?= Html::encode($this->title) ?></h1>
 
-        <p>
-            <?= Html::a('Create Responden', ['create'], ['class' => 'btn btn-success']) ?>
-        </p>
+        <!-- <p> -->
+             <!-- Html::a('Create Responden', ['create'], ['class' => 'btn btn-success'])  -->
+        <!-- </p> -->
 
         <?php Pjax::begin(); ?>
         <?php // echo $this->render('_search', ['model' => $searchModel]); 
@@ -51,7 +51,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
 
-                ['class' => 'yii\grid\ActionColumn'],
+                ['class' => 'yii\grid\ActionColumn','template' => '{view}',],
             ],
         ]); ?>
 

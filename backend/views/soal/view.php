@@ -16,6 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
+    <?= Html::a('Back', ['/soal'], ['class' => 'btn btn-primary']) ?>
 
 
     <table id="w0" class="table table-striped table-bordered detail-view">
@@ -27,14 +28,14 @@ $this->params['breadcrumbs'][] = $this->title;
             <tr>
                 <th>Pilihan</th>
                 <td>
-                    <?php 
+                    <?php
                     foreach ($pilihan as $key => $value) {
-                        if($value['benar_salah'] ==  true){
-                            echo " <b><u>" . $value['pilihan'] . ". " . $value['keterangan']. "</u></b>";
+                        if ($value['benar_salah'] ==  true) {
+                            echo " <b><u>" . $value['pilihan'] . ". " . $value['keterangan'] . "</u></b>";
                         } else {
-                            echo " ".$value['pilihan'] . ". ". $value['keterangan'];
+                            echo " " . $value['pilihan'] . ". " . $value['keterangan'];
                         }
-                     }
+                    }
                     ?>
                 </td>
             </tr>

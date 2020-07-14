@@ -43,4 +43,10 @@ class Responden extends \yii\db\ActiveRecord
             'jenis_kelamin' => 'Jenis Kelamin',
         ];
     }
+
+    public function getResponden()
+    {
+        return $this->belongsTo(Responden::className(), ['id' => 'id_responden']);
+    }
+
 }

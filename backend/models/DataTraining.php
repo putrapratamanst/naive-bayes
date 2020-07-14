@@ -44,4 +44,14 @@ class DataTraining extends \yii\db\ActiveRecord
             'id_parameter' => 'Id Parameter',
         ];
     }
+
+    public function getParameterRelation()
+    {
+        return $this->hasOne(Parameter::className(), ['id' => 'id_parameter']);
+    }
+
+    public function getResponden()
+    {
+        return $this->hasMany(Responden::className(), ['id' => 'id_responden']);
+    }
 }
