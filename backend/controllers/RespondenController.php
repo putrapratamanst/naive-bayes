@@ -235,6 +235,7 @@ class RespondenController extends Controller
         $responden = array();
         $id_responden = 0;
 
+        $sumValue = 0;
         //-- melakukan iterasi pengisian array untuk tiap record data yang didapat
         foreach ($list as $row) {
 
@@ -242,9 +243,18 @@ class RespondenController extends Controller
                 $responden[$row['id_responden']] = $row['nama'];
                 $data[$row['id_responden']] = array();
                 $id_responden = $row['id_responden'];
+                $sumValue = 0;
+
+            }
+
+            if ($id_responden == $row['id_responden']) {
+                $sumValue += $row['value'];
             }
             $data[$row['id_responden']][$row['id_attribute']] = $row['value'];
+            $data[$row['id_responden']][$row['id_attribute'] + 1] = $sumValue;
+            
         }
+        
         return $this->render('naive-bayes-data-training', [
             'data'         => $data,
             'parameter'    => $parameter,

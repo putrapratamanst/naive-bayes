@@ -4,11 +4,6 @@
 
         <h1>Data Training</h1>
 
-        <p>
-            <!-- Html::a('Create Attributes', ['create'], ['class' => 'btn btn-success']) -->
-        </p>
-
-
         <div id="w0" class="grid-view">
             <table class="table table-striped table-bordered">
                 <thead>
@@ -17,12 +12,13 @@
                         <?php for ($i = 1; $i <= $jml_atribut; $i++) {
                             echo "<th>{$atribut[$i]}</th>";
                         } ?>
-
+                        <th>Prediksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <?php
+
                         //-- menampilkan data secara literal
                         foreach ($data as $id_responden => $dt_atribut) {
 
@@ -32,6 +28,19 @@
 
                                 echo "<td>{$parameter[$i][$dt_atribut[$i]]}</td>";
                             }
+                            switch (true) {
+                                case $dt_atribut[7] >= 14:
+                                    echo "<td>Layak</td>";
+                                    break;
+                                case $dt_atribut[7] < 14:
+                                    echo "<td> Tidak Layak</td>";
+                                    break;
+                                
+                                default:
+                                    # code...
+                                    break;
+                            }
+                            echo "</tr>";
                         }
                         ?>
                     </tr>
