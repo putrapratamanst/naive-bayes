@@ -125,7 +125,7 @@ class AttributesController extends Controller
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 
-    public function actionList()
+    public static function actionList()
     {
         $attribute = [];
         $list = Attributes::find()->asArray()->all();

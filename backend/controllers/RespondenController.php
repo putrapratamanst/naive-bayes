@@ -195,7 +195,6 @@ class RespondenController extends Controller
             $parameter[$row['id_atribut']][$row['nilai']] = $row['parameter'];
         }
 
-
         //responden
         $data = array();
         $responden = array();
@@ -210,7 +209,6 @@ class RespondenController extends Controller
             }
             $data[$row['id_responden']][$row['id_atribut']] = $row['id_parameter'];
         }
-        die(json_encode($result));
 
     
         // $this->layout = "main-old";
@@ -226,7 +224,11 @@ class RespondenController extends Controller
 
     public function actionDataTraining()
     {
-        $list = DataTraining::find()->select(['id_attribute' , 'id_responden', 'id_parameter','responden.nama '])->joinWith('responden')->asArray()->all();
+        $attribute = AttributesController::actionList();
+        $jml_atribut = count($attribute);
+        $parameter = ParameterController::actionList();
+
+        $list = DataTraining::find()->select(['data_training.id', 'data_training.id_attribute' , 'id_responden', 'id_parameter', 'responden.nama', 'parameter.value'])->joinWith(['responden', 'parameterRelation'])->asArray()->all();
 
         //responden
         $data = array();
@@ -237,13 +239,19 @@ class RespondenController extends Controller
         foreach ($list as $row) {
 
             if ($id_responden != $row['id_responden']) {
-                $responden[$row['id_responden']] = $row['responden'];
+                $responden[$row['id_responden']] = $row['nama'];
                 $data[$row['id_responden']] = array();
                 $id_responden = $row['id_responden'];
             }
-            $data[$row['id_responden']][$row['id_attribute']] = $row['id_parameter'];
+            $data[$row['id_responden']][$row['id_attribute']] = $row['value'];
         }
-        
-        return $data;
+        return $this->render('naive-bayes-data-training', [
+            'data'         => $data,
+            'parameter'    => $parameter,
+            'atribut'      => $attribute,
+            'jml_atribut'  => $jml_atribut,
+            'responden'    => $responden,
+
+        ]);
     }
 }

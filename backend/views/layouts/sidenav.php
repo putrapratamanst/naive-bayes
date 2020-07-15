@@ -39,7 +39,7 @@ $user = Yii::$app->user->identity;
                         <li><a href="/site/logout"><i class="fa fa-gear"></i> LOGOUT </a></li> -->
                     <li><a><i class="fa fa-calculator"></i> Naive Bayes <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                            <li><a href="/delivery/create">Entry Data</a></li>
+                            <li><a href="/responden/data-training">Data Training</a></li>
                             <li><a href="/delivery/index">List Data</a></li>
                         </ul>
                     </li>

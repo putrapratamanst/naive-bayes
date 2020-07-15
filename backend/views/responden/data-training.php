@@ -11,10 +11,13 @@
         <th><?php echo $atribut[1]; ?></th>
     </tr>
     <?php
+
     //-- menampilkan data secara literal
     foreach ($data as $id_responden => $dt_atribut) {
+
         echo "<tr><td>{$responden[$id_responden]}</td>";
         for ($i = 2; $i <= $jml_atribut; $i++) {
+
             echo "<td>{$parameter[$i][$dt_atribut[$i]]}</td>";
         }
         echo "<td>{$parameter[1][$dt_atribut[1]]}</td></tr>";
