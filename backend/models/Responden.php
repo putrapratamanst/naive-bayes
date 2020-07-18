@@ -27,7 +27,7 @@ class Responden extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['nama', 'jenis_kelamin'], 'string', 'max' => 255],
+            [['nama', 'jenis_kelamin', 'verif_data_pelamar', 'verif_wawancara', 'verif_kesehatan'], 'string', 'max' => 255],
             [['nama', 'jenis_kelamin'], 'required'],
         ];
     }

@@ -8,7 +8,7 @@ use yii\widgets\DetailView;
 
 $ipFrontend = "localhost:8002/";
 $status = "";
-switch ($model->verif_data_pelamar) {
+switch ($model->verif_wawancara) {
     case '1':
         $status = "(LOLOS)";
         break;
@@ -104,13 +104,13 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]) ?>
     <?php 
-    if($model->verif_data_pelamar == NULL){
+    if($model->verif_wawancara == NULL){
     ?>
     <center>
-        <?= Html::a('Lolos', ['verif-data-pelamar-success', 'id' => $model->id], [
+        <?= Html::a('Lolos', ['verif-data-wawancara-success', 'id' => $model->id], [
             'class' => 'btn btn-success',
         ]) ?>
-        <?= Html::a('Gagal', ['verif-data-pelamar-gagal', 'id' => $model->id], [
+        <?= Html::a('Gagal', ['verif-data-wawancara-gagal', 'id' => $model->id], [
             'class' => 'btn btn-danger',
         ]) ?>
     </center>

@@ -30,10 +30,10 @@
                             }
                             switch (true) {
                                 case $dt_atribut[7] >= 14:
-                                    echo "<td>Layak</td>";
+                                    echo "<td style='color:blue'><b><i>Layak</i></b></td>";
                                     break;
                                 case $dt_atribut[7] < 14:
-                                    echo "<td> Tidak Layak</td>";
+                                    echo "<td style='color:red'><b><i> Tidak Layak</i></b></td>";
                                     break;
                                 
                                 default:

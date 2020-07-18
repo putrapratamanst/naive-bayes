@@ -9,8 +9,6 @@ use backend\models\RespondenSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\helpers\Json;
-use yii\web\Response;
 
 /**
  * RespondenController implements the CRUD actions for Responden model.
@@ -41,10 +39,14 @@ class RespondenController extends Controller
         // $this->layout = "main-old";
         $searchModel = new RespondenSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProviderFisik = $searchModel->searchFisik(Yii::$app->request->queryParams);
+        $dataProviderWawancara = $searchModel->searchWawancara(Yii::$app->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'dataProviderFisik' => $dataProviderFisik,
+            'dataProviderWawancara' => $dataProviderWawancara,
         ]);
     }
 
@@ -57,6 +59,20 @@ class RespondenController extends Controller
     public function actionView($id)
     {
         return $this->render('view', [
+            'model' => $this->findModel($id),
+        ]);
+    }
+
+    public function actionViewFisik($id)
+    {
+        return $this->render('view-fisik', [
+            'model' => $this->findModel($id),
+        ]);
+    }
+
+    public function actionViewWawancara($id)
+    {
+        return $this->render('view-wawancara', [
             'model' => $this->findModel($id),
         ]);
     }
@@ -97,6 +113,51 @@ class RespondenController extends Controller
         return $this->render('update', [
             'model' => $model,
         ]);
+    }
+
+    public function actionVerifDataPelamarSuccess($id)
+    {
+        $model = $this->findModel($id);
+        $model->verif_data_pelamar = "1";
+        $model->save();
+        return $this->redirect(['view', 'id' => $model->id]);
+    }
+    public function actionVerifDataPelamarGagal($id)
+    {
+        $model = $this->findModel($id);
+        $model->verif_data_pelamar = "0";
+        $model->save();
+        return $this->redirect(['view', 'id' => $model->id]);
+    }
+
+    public function actionVerifDataKesehatanSuccess($id)
+    {
+        $model = $this->findModel($id);
+        $model->verif_kesehatan = "1";
+        $model->save();
+        return $this->redirect(['view-fisik', 'id' => $model->id]);
+    }
+    public function actionVerifDataKesehatanGagal($id)
+    {
+        $model = $this->findModel($id);
+        $model->verif_kesehatan = "0";
+        $model->save();
+        return $this->redirect(['view-fisik', 'id' => $model->id]);
+    }
+
+    public function actionVerifDataWawancaraSuccess($id)
+    {
+        $model = $this->findModel($id);
+        $model->verif_wawancara = "1";
+        $model->save();
+        return $this->redirect(['view-wawancara', 'id' => $model->id]);
+    }
+    public function actionVerifDataWawancaraGagal($id)
+    {
+        $model = $this->findModel($id);
+        $model->verif_wawancara = "0";
+        $model->save();
+        return $this->redirect(['view-wawancara', 'id' => $model->id]);
     }
 
     /**

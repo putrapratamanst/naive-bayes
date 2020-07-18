@@ -18,7 +18,7 @@ class RespondenSearch extends Responden
     {
         return [
             [['id'], 'integer'],
-            [['nama', 'jenis_kelamin'], 'safe'],
+            [['nama', 'jenis_kelamin','verif_data_pelamar', 'verif_wawancara', 'verif_kesehatan'], 'safe'],
         ];
     }
 
@@ -45,7 +45,63 @@ class RespondenSearch extends Responden
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
-            'query' => $query,
+            'query' => $query,'pagination' => false,
+        ]);
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
+        // grid filtering conditions
+        $query->andFilterWhere([
+            'id' => $this->id,
+        ]);
+
+        $query->andFilterWhere(['like', 'nama', $this->nama])
+            ->andFilterWhere(['like', 'jenis_kelamin', $this->jenis_kelamin]);
+
+        return $dataProvider;
+    }
+    public function searchFisik($params)
+    {
+        $query = Responden::find()->where(['verif_data_pelamar' => "1"]);
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,'pagination' => false,
+        ]);
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
+        // grid filtering conditions
+        $query->andFilterWhere([
+            'id' => $this->id,
+        ]);
+
+        $query->andFilterWhere(['like', 'nama', $this->nama])
+            ->andFilterWhere(['like', 'jenis_kelamin', $this->jenis_kelamin]);
+
+        return $dataProvider;
+    }
+    public function searchWawancara($params)
+    {
+        $query = Responden::find()->where(['verif_data_pelamar' => "1"])->andWhere(['verif_kesehatan' => "1"]);
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,'pagination' => false,
         ]);
 
         $this->load($params);
