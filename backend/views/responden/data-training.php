@@ -43,12 +43,14 @@ $prior_freq = array();
 foreach ($data as $i => $v) {
     //-- hitung freq tiap atribut
     for ($j = 2; $j <= $jml_atribut; $j++) {
-        $freq[$j][$v[$j]][$v[1]] += 1;
+        // $freq[$j][$v[$j]][$v[1]] += 1;
+
     }
     //-- hitung feq prior/kelas
     if (!isset($prior_freq[$v[1]])) $prior_freq[$v[1]] = 0;
     $prior_freq[$v[1]] += 1;
 }
+
 ksort($prior_freq);
 //-- menampilkan tabel frekuensi/jumlah data kelas
 ?>

@@ -12,7 +12,7 @@
                         <?php for ($i = 1; $i <= $jml_atribut; $i++) {
                             echo "<th>{$atribut[$i]}</th>";
                         } ?>
-                        <th>Prediksi</th>
+                        <th>Prediksi Kasar</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -21,13 +21,13 @@
 
                         //-- menampilkan data secara literal
                         foreach ($data as $id_responden => $dt_atribut) {
-
                             echo "<tr><td>{$responden[$id_responden]}</td>";
 
                             for ($i = 1; $i <= $jml_atribut; $i++) {
 
                                 echo "<td>{$parameter[$i][$dt_atribut[$i]]}</td>";
                             }
+                            
                             switch (true) {
                                 case $dt_atribut[7] >= 14:
                                     echo "<td style='color:blue'><b><i>Layak</i></b></td>";

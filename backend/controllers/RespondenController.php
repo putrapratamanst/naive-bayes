@@ -2,10 +2,12 @@
 
 namespace backend\controllers;
 
+use backend\models\Attributes;
 use backend\models\DataTraining;
 use Yii;
 use backend\models\Responden;
 use backend\models\RespondenSearch;
+use frontend\models\Parameter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -65,8 +67,11 @@ class RespondenController extends Controller
 
     public function actionViewFisik($id)
     {
+        $dataTrainingUser = DataTraining::find()->where(['id_responden' => $id])->andWhere(['not', ['id_parameter' => null]])->asArray()->all();
+
         return $this->render('view-fisik', [
             'model' => $this->findModel($id),
+            'dataTrainingUser' => $dataTrainingUser,
         ]);
     }
 
@@ -132,7 +137,7 @@ class RespondenController extends Controller
         $model = $this->findModel($id);
         $model->verif_data_pelamar = "0";
         $model->save();
-                $this->sendEmail([
+        $this->sendEmail([
             'email' => $model->email,
             'status' => "GAGAL",
             'title' => 'VERIFIKASI DATA PELAMAR'
@@ -146,7 +151,7 @@ class RespondenController extends Controller
         $model = $this->findModel($id);
         $model->verif_kesehatan = "1";
         $model->save();
-                $this->sendEmail([
+        $this->sendEmail([
             'email' => $model->email,
             'status' => "GAGAL",
             'title' => 'VERIFIKASI DATA PELAMAR'
@@ -159,7 +164,7 @@ class RespondenController extends Controller
         $model = $this->findModel($id);
         $model->verif_kesehatan = "0";
         $model->save();
-                $this->sendEmail([
+        $this->sendEmail([
             'email' => $model->email,
             'status' => "GAGAL",
             'title' => 'VERIFIKASI DATA PELAMAR'
@@ -173,7 +178,7 @@ class RespondenController extends Controller
         $model = $this->findModel($id);
         $model->verif_wawancara = "1";
         $model->save();
-                $this->sendEmail([
+        $this->sendEmail([
             'email' => $model->email,
             'status' => "GAGAL",
             'title' => 'VERIFIKASI DATA PELAMAR'
@@ -317,8 +322,127 @@ class RespondenController extends Controller
         $jml_atribut = count($attribute);
         $parameter = ParameterController::actionList();
 
-        $list = DataTraining::find()->select(['data_training.id', 'data_training.id_attribute', 'id_responden', 'id_parameter', 'responden.nama', 'parameter.value'])->joinWith(['responden', 'parameterRelation'])->asArray()->all();
+        $result = $this->resultDataTraining();
+        $data = $result['data'];
+        $responden = $result['responden'];
+       
+        return $this->render('naive-bayes-data-training', [
+            'data'         => $data,
+            'parameter'    => $parameter,
+            'atribut'      => $attribute,
+            'jml_atribut'  => $jml_atribut,
+            'responden'    => $responden,
 
+        ]);
+    }
+
+
+    public function moveElement($a, $i, $j)
+    {
+        $k = $a[$i];
+        $a[$i] = $a[$j];
+        $a[$j] = $k;
+        return $a;
+    }
+
+    public function actionFrequensiData()
+    {
+        $attribute = AttributesController::actionList();
+        $jml_atribut = count($attribute) + 1;
+        $parameter = ParameterController::actionList();
+        $result = $this->resultDataTraining();
+        $data = $result['data'];
+        $responden = $result['responden'];
+
+        $newData = [];
+        $countFrequensi =
+            [
+                [
+                    'status' => 'Layak',
+                    'count'  => 0
+                ],
+                [
+                    'status' => 'Tidak Layak',
+                    'count' => 0,
+                ]
+            ];
+
+        foreach ($data as $key => $value) {
+            if ($value['7'] < 14) {
+                $countFrequensi[1]['count']++;
+            } else {
+                $countFrequensi[0]['count']++;
+            }
+            // unset($value['7']);
+            array_push($newData, $value);
+        }
+        // die(json_encode($newData));
+        $freq = $this->freq($jml_atribut);
+        $prior_freq = $this->prior_freq($newData, $jml_atribut, $freq);
+
+        return $this->render('frequensi-data', [
+            'jml_atribut'  => $jml_atribut,
+            'parameter'    => $parameter,
+            'responden'    => $responden,
+            'data'         => $newData,
+            'attribute'    => $attribute,
+            'countFrequensi'    => $countFrequensi,
+            'freq'    => $freq,
+            'prior_freq'    => $prior_freq,
+        ]);
+    }
+
+    public function freq($jml_atribut)
+    {
+        $freq = array();
+        //-- inisialisasi data awal $freq
+        for ($i = 2; $i <= $jml_atribut; $i++) {
+            for ($j = 0; $j < 4; $j++) {
+                for ($k = 0; $k < 3; $k++) {
+                    $freq[$i][$j][$k] = 0;
+                }
+            }
+        }   
+
+        return $freq;
+    }
+
+    public function prior_freq($data, $jml_atribut, $freq)
+    {
+        $prior_freq = array();
+        $newData = [];
+        foreach ($data as  $dataValue) {
+            if($dataValue[7] < 14){
+                $dataValue[7] = 1;
+            } else {
+                $dataValue[7] = 2;
+            }
+
+            $move = $this->moveElement($dataValue, 7,1);
+            array_push($newData, $move);
+        }
+
+        //-- iterasi tiap data training
+        foreach ($newData as $i => $v) {
+            //-- hitung freq tiap atribut
+            for ($j = 2; $j <= $jml_atribut; $j++) {
+                    $freq[$j][$v[$j]][$v[1]] += 1;
+            }
+            // //-- hitung feq prior/kelas
+            if (!isset($prior_freq[$v[1]])) $prior_freq[$v[1]] = 0;
+            $prior_freq[$v[1]] += 1;
+        }
+        
+        ksort( $prior_freq);
+
+        return $prior_freq;
+
+    }
+    public function resultDataTraining()
+    {
+        $list = DataTraining::find()->select(['data_training.id', 'data_training.id_attribute', 'id_responden', 'id_parameter', 'responden.nama', 'parameter.value'])->joinWith(['responden', 'parameterRelation'])
+            ->where(['verif_data_pelamar' => "1"])->andWhere(['verif_kesehatan' => "1"])
+            ->asArray()->all();
         //responden
         $data = array();
         $responden = array();
@@ -327,7 +451,6 @@ class RespondenController extends Controller
         $sumValue = 0;
         //-- melakukan iterasi pengisian array untuk tiap record data yang didapat
         foreach ($list as $row) {
-
             if ($id_responden != $row['id_responden']) {
                 $responden[$row['id_responden']] = $row['nama'];
                 $data[$row['id_responden']] = array();
@@ -342,16 +465,11 @@ class RespondenController extends Controller
             $data[$row['id_responden']][$row['id_attribute'] + 1] = $sumValue;
         }
 
-        return $this->render('naive-bayes-data-training', [
-            'data'         => $data,
-            'parameter'    => $parameter,
-            'atribut'      => $attribute,
-            'jml_atribut'  => $jml_atribut,
-            'responden'    => $responden,
-
-        ]);
+        return [
+            'data' => $data,
+            'responden' => $responden,
+        ];
     }
-
     public function sendEmail($params)
     {
         try {

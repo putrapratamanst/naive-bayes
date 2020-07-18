@@ -40,7 +40,7 @@ $user = Yii::$app->user->identity;
                     <li><a><i class="fa fa-calculator"></i> Naive Bayes <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                             <li><a href="/responden/data-training">Data Training</a></li>
-                            <li><a href="/delivery/index">List Data</a></li>
+                            <li><a href="/responden/frequensi-data">Frekuensi Data</a></li>
                         </ul>
                     </li>
                 </ul>

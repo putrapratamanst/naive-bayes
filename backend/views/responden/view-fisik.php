@@ -31,6 +31,13 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a('Back', ['/responden'], ['class' => 'btn btn-primary']) ?>
+        <?php
+
+        if (count($dataTrainingUser) <= 6 && $model->verif_kesehatan == NULL) {
+            
+            ?>
+            <?= Html::a('Input Verifikasi', ['/data-training/view', 'id' => $model->id], ['class' => 'btn btn-warning pull-right']) ?>
+        <?php } ?>
     </p>
 
 
@@ -103,8 +110,8 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ],
     ]) ?>
-    <?php 
-    if($model->verif_kesehatan == NULL){
+    <?php
+    if(count($dataTrainingUser) == 6 && $model->verif_kesehatan == NULL){
     ?>
     <center>
         <?= Html::a('Lolos', ['verif-data-kesehatan-success', 'id' => $model->id], [

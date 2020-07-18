@@ -41,7 +41,7 @@ class DataTraining extends \yii\db\ActiveRecord
             'id' => 'ID',
             'id_responden' => 'Id Responden',
             'id_attribute' => 'Id Attribute',
-            'id_parameter' => 'Id Parameter',
+            'id_parameter' => 'Parameter',
         ];
     }
 
