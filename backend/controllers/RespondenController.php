@@ -120,6 +120,11 @@ class RespondenController extends Controller
         $model = $this->findModel($id);
         $model->verif_data_pelamar = "1";
         $model->save();
+        $this->sendEmail([
+            'email' => $model->email,
+            'status' => "GAGAL",
+            'title' => 'VERIFIKASI DATA PELAMAR'
+        ]);
         return $this->redirect(['view', 'id' => $model->id]);
     }
     public function actionVerifDataPelamarGagal($id)
@@ -127,6 +132,12 @@ class RespondenController extends Controller
         $model = $this->findModel($id);
         $model->verif_data_pelamar = "0";
         $model->save();
+                $this->sendEmail([
+            'email' => $model->email,
+            'status' => "GAGAL",
+            'title' => 'VERIFIKASI DATA PELAMAR'
+        ]);
+
         return $this->redirect(['view', 'id' => $model->id]);
     }
 
@@ -135,6 +146,12 @@ class RespondenController extends Controller
         $model = $this->findModel($id);
         $model->verif_kesehatan = "1";
         $model->save();
+                $this->sendEmail([
+            'email' => $model->email,
+            'status' => "GAGAL",
+            'title' => 'VERIFIKASI DATA PELAMAR'
+        ]);
+
         return $this->redirect(['view-fisik', 'id' => $model->id]);
     }
     public function actionVerifDataKesehatanGagal($id)
@@ -142,6 +159,12 @@ class RespondenController extends Controller
         $model = $this->findModel($id);
         $model->verif_kesehatan = "0";
         $model->save();
+                $this->sendEmail([
+            'email' => $model->email,
+            'status' => "GAGAL",
+            'title' => 'VERIFIKASI DATA PELAMAR'
+        ]);
+
         return $this->redirect(['view-fisik', 'id' => $model->id]);
     }
 
@@ -150,6 +173,12 @@ class RespondenController extends Controller
         $model = $this->findModel($id);
         $model->verif_wawancara = "1";
         $model->save();
+                $this->sendEmail([
+            'email' => $model->email,
+            'status' => "GAGAL",
+            'title' => 'VERIFIKASI DATA PELAMAR'
+        ]);
+
         return $this->redirect(['view-wawancara', 'id' => $model->id]);
     }
     public function actionVerifDataWawancaraGagal($id)
@@ -192,20 +221,20 @@ class RespondenController extends Controller
 
     public function actionGetAttribute()
     {
-    
+
         $dataAttribute = Yii::$app->db2->createCommand('SELECT * FROM nbc_atribut')->queryAll();
         $atribut = array();
 
         foreach ($dataAttribute as $row) {
             $atribut[$row['id_atribut']] = $row['atribut'];
         }
-        
+
         return $atribut;
     }
 
     public function actionGetParameter()
     {
-    
+
         $dataParameter = Yii::$app->db2->createCommand('SELECT * FROM nbc_parameter ORDER BY id_atribut,id_parameter')->queryAll();
         $parameter = array();
         $id_atribut = 0;
@@ -215,7 +244,7 @@ class RespondenController extends Controller
                 $parameter[$row['id_atribut']] = array();
                 $id_atribut = $row['id_atribut'];
             }
-            
+
             $parameter[$row['id_atribut']][$row['nilai']] = $row['parameter'];
         }
 
@@ -228,7 +257,7 @@ class RespondenController extends Controller
         $data = array();
         $id_responden = 0;
         $jml_atribut = count($this->actionGetAttribute());
-       
+
         $result = Yii::$app->db2->createCommand('SELECT * FROM nbc_data a JOIN nbc_responden b USING(id_responden) ORDER BY a.id_data')->queryAll();
 
         //attribute
@@ -237,10 +266,9 @@ class RespondenController extends Controller
 
         foreach ($dataAttribute as $row) {
             $atribut[$row['id_atribut']] = $row['atribut'];
-            
         }
-        
-        
+
+
         //parameter
         $dataParameter = Yii::$app->db2->createCommand('SELECT * FROM nbc_parameter ORDER BY id_atribut,id_parameter')->queryAll();
 
@@ -271,7 +299,7 @@ class RespondenController extends Controller
             $data[$row['id_responden']][$row['id_atribut']] = $row['id_parameter'];
         }
 
-    
+
         // $this->layout = "main-old";
         return $this->render('data-training', [
             'data' => $data,
@@ -289,7 +317,7 @@ class RespondenController extends Controller
         $jml_atribut = count($attribute);
         $parameter = ParameterController::actionList();
 
-        $list = DataTraining::find()->select(['data_training.id', 'data_training.id_attribute' , 'id_responden', 'id_parameter', 'responden.nama', 'parameter.value'])->joinWith(['responden', 'parameterRelation'])->asArray()->all();
+        $list = DataTraining::find()->select(['data_training.id', 'data_training.id_attribute', 'id_responden', 'id_parameter', 'responden.nama', 'parameter.value'])->joinWith(['responden', 'parameterRelation'])->asArray()->all();
 
         //responden
         $data = array();
@@ -305,7 +333,6 @@ class RespondenController extends Controller
                 $data[$row['id_responden']] = array();
                 $id_responden = $row['id_responden'];
                 $sumValue = 0;
-
             }
 
             if ($id_responden == $row['id_responden']) {
@@ -313,9 +340,8 @@ class RespondenController extends Controller
             }
             $data[$row['id_responden']][$row['id_attribute']] = $row['value'];
             $data[$row['id_responden']][$row['id_attribute'] + 1] = $sumValue;
-            
         }
-        
+
         return $this->render('naive-bayes-data-training', [
             'data'         => $data,
             'parameter'    => $parameter,
@@ -324,5 +350,28 @@ class RespondenController extends Controller
             'responden'    => $responden,
 
         ]);
+    }
+
+    public function sendEmail($params)
+    {
+        try {
+            Yii::$app->mailer->compose()
+                ->setFrom("putrapratamanst@gmail.com")
+                ->setTo($params['email'])
+                ->setSubject('Notfication: ' . $params['status'])
+                ->setTextBody('Plain text content')
+                ->send();
+        } catch (\Swift_TransportException $e) {
+            var_dump($e->getMessage());
+        }
+        // \Yii::$app->mailer->compose('template', [
+        //     'email' => $params['email'],
+        //     'status' => $params['status'],
+        //     'title' => $params['title'],
+        //     ])
+        //     ->setFrom("putrapratamanst@gmail.com")
+        //     ->setTo($params['email'])
+        //     ->setSubject('Notfication: '. $params['status'])
+        //     ->send();
     }
 }
