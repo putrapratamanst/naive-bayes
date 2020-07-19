@@ -35,7 +35,7 @@ $totalSummaryP = round($total / $total * 100) . "%";
             ],
         ]); ?>
         <hr>
-        <?php for ($i = 1; $i <= $jml_atribut - 1; $i++) {
+        <?php for ($i = 1; $i <= $jml_atribut; $i++) {
         ?> <h1>P(<?= $attribute[$i] ?> = ... </h1>
 
             <div id="w0" class="grid-view">
