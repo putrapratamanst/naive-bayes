@@ -541,6 +541,7 @@ class RespondenController extends Controller
             $data[$row['id_responden']][$row['id_attribute']] = $row['value'];
             $data[$row['id_responden']][$row['id_attribute'] + 1] = $sumValue;
             $data[$row['id_responden']]['responden'] = $row['id_responden'];
+            $data[$row['id_responden']]['nama_responden'] = $row['nama'];
         }
 
 
@@ -621,5 +622,92 @@ class RespondenController extends Controller
         //     ->setTo($params['email'])
         //     ->setSubject('Notfication: '. $params['status'])
         //     ->send();
+    }
+
+    public function actionDataTestingPrediksi()
+    {
+        $attribute = AttributesController::actionList();
+        $jml_atribut = count($attribute);
+        $parameter = ParameterController::actionList();
+        $result = $this->resultDataTraining(); //memang masih pake data training
+        $data = $result['data'];
+        $responden = $result['responden'];
+
+        $newData = [];
+        $countFrequensi =
+            [
+                [
+                    'status' => 'Lulus',
+                    'count'  => 0
+                ],
+                [
+                    'status' => 'Tidak Lulus',
+                    'count' => 0,
+                ]
+            ];
+
+        foreach ($data as $key => $value) {
+            if ($value['7'] < 14) {
+                $countFrequensi[1]['count']++;
+            } else {
+                $countFrequensi[0]['count']++;
+            }
+            // unset($value['7']);
+            array_push($newData, $value);
+        }
+
+        //bentuk data berdasarkan attribut
+        $temp = [];
+
+        foreach ($attribute as $keyAttribute => $valueAttribute) {
+            foreach ($parameter[$keyAttribute] as $keyParameter => $valueParameter) {
+
+                $temp[$valueAttribute][$valueParameter]['lulus']['jumlah'] = 0;
+                $temp[$valueAttribute][$valueParameter]['tidak_lulus']['jumlah'] = 0;
+
+                foreach ($data as $keyData => $valueData) {
+                    foreach ($valueData as $keyValueDataLast => $valueDataLast) {
+                        if ($keyValueDataLast == $keyAttribute) {
+                            if ($keyParameter == $valueDataLast) {
+                                if ($valueData[7] >= 14) {
+                                    $temp[$valueAttribute][$valueParameter]['lulus']['jumlah']++;
+                                } else {
+                                    $temp[$valueAttribute][$valueParameter]['tidak_lulus']['jumlah']++;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        for ($i = 1; $i <= $jml_atribut ; $i++) {
+            foreach ($parameter[$i] as $nilai => $param) {
+                foreach ($temp[$attribute[$i]][$param] as $key => $value) {
+                    if ($key == "lulus") {
+                        $temp[$attribute[$i]][$param][$key]['persen'] = round($value['jumlah'] / $countFrequensi[0]['count'] * 100) / 100;
+                    } else {
+                        $temp[$attribute[$i]][$param][$key]['persen'] = round($value['jumlah'] / $countFrequensi[1]['count'] * 100) / 100;
+                    }
+
+                }
+            }
+        }
+        $dataSample = $this->resultDataSample();
+        $dataResultSample = $dataSample['data'];
+        $newDataSample =   [];
+
+        return $this->render('prediksi-data-testing', [
+            'jml_atribut'  => $jml_atribut,
+            'parameter'    => $parameter,
+            'responden'    => $responden,
+            'data'         => $newData,
+            'attribute'    => $attribute,
+            'countFrequensi'    => $countFrequensi,
+            'data_by_attribute'    => $temp,
+            'data_sample_by_attribute'    => $newDataSample,
+            'dataResultSample'    => $dataResultSample,
+        ]);
+
     }
 }
