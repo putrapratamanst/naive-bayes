@@ -8,6 +8,8 @@ $provider = new ArrayDataProvider([
     'allModels' => $countFrequensi,
 ]);
 $total = $countFrequensi[0]['count'] + $countFrequensi[1]['count'];
+$totalLulus = $countFrequensi[0]['count'];
+$totalTidakLulus = $countFrequensi[1]['count'];
 $totalSummaryP = round($total / $total * 100) . "%";
 ?>
 <div class="col-md-12">
@@ -51,20 +53,26 @@ $totalSummaryP = round($total / $total * 100) . "%";
                     <tbody>
                         <?php
                         foreach ($parameter[$i] as $nilai => $param) {
-
-                            echo "<td>{$param}</td>";
-
+                            echo"<td>{$param}</td>";
                             foreach ($data_by_attribute[$attribute[$i]][$param] as $key => $value) {
+                                $persen = 0;
+                                if($key == "lulus"){
+                                    $persen = round($value['jumlah'] / $totalLulus * 100);
+                                } else {
+                                    $persen = round($value['jumlah'] / $totalTidakLulus * 100);
+                                }
                                 echo "<td>";
-                                echo "Jumlah: " . $value;
-                                echo " | Persentase: " . round($value / $total * 100);
+                                echo "Jumlah: " . $value['jumlah'];
+                                echo " | Persentase: " . $persen;
                                 echo "%</td>";
                             }
                             echo "</tr>";
                         }
                         ?>
                         <tr>
-                            <td colspan='3' style="text-align:center">Total: 100%</td>
+                            <td></td>
+                            <td>Total: 100%</td>
+                            <td>Total: 100%</td>
                         </tr>
                     </tbody>
                 </table>

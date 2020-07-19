@@ -406,27 +406,24 @@ class RespondenController extends Controller
         foreach ($attribute as $keyAttribute => $valueAttribute) {
             foreach ($parameter[$keyAttribute] as $keyParameter => $valueParameter) {
 
-                $temp[$valueAttribute][$valueParameter]['lulus'] = 0;
-                $temp[$valueAttribute][$valueParameter]['tidak_lulus'] = 0;
+                $temp[$valueAttribute][$valueParameter]['lulus']['jumlah'] = 0;
+                $temp[$valueAttribute][$valueParameter]['tidak_lulus']['jumlah']= 0;
 
                 foreach ($data as $keyData => $valueData) {
                     foreach ($valueData as $keyValueDataLast => $valueDataLast) {
                         if ($keyValueDataLast == $keyAttribute) {
                             if($keyParameter == $valueDataLast){
                                 if ($valueData[7] >= 14) {
-                                
-                                    $temp[$valueAttribute][$valueParameter]['lulus'] ++ ;
+                                    $temp[$valueAttribute][$valueParameter]['lulus']['jumlah'] ++ ;
                                 } else {
-                                    $temp[$valueAttribute][$valueParameter]['tidak_lulus'] ++;
+                                    $temp[$valueAttribute][$valueParameter]['tidak_lulus']['jumlah'] ++;
                                 }
                             }
-                            
                         }
                     }
                 }
             }
         }
-
         return $this->render('frequensi-data', [
             'jml_atribut'  => $jml_atribut,
             'parameter'    => $parameter,
