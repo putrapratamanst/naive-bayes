@@ -41,6 +41,7 @@ $user = Yii::$app->user->identity;
                         <ul class="nav child_menu">
                             <li><a href="/responden/data-training">Data Training</a></li>
                             <li><a href="/responden/frequensi-data">Frekuensi Data</a></li>
+                            <li><a href="/responden/data-sample">Data Testing</a></li>
                         </ul>
                     </li>
                 </ul>

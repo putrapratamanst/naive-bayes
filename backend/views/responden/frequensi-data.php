@@ -7,79 +7,66 @@ use yii\grid\GridView;
 $provider = new ArrayDataProvider([
     'allModels' => $countFrequensi,
 ]);
+$total = $countFrequensi[0]['count'] + $countFrequensi[1]['count'];
+$totalSummaryP = round($total / $total * 100) . "%";
 ?>
-<h1>Frequensi Data </h1>
-<?= GridView::widget([
-    'dataProvider' => $provider,
-    'columns' => [
-        ['class' => 'yii\grid\SerialColumn'],
-        'status',
-        'count',
+<div class="col-md-12">
+    <div class="x_panel">
 
-    ],
-]); ?>
-<hr>
-<?php for ($i = 2; $i <= $jml_atribut - 1; $i++) {
-?> <h1>Jumlah Data Atribut <?= $attribute[$i] ?> </h1>
+        <h1>P(Lulus/Tidak Lulus) </h1>
+        <?= GridView::widget([
+            'dataProvider' => $provider,
+            'summary' => "",
+            'showFooter' => true,
 
-    <div id="w0" class="grid-view">
-        <table class="table table-striped table-bordered">
-            <thead>
-                <?php echo "<tr>
-                    <th rowspan='2' style='width: 17%;'>STATUS KELAYAKAN</th>
-                    <th colspan='3' style='text-align:center'>
+            'columns' => [
+                'status',
+                [
+                    'attribute' => 'count',
+                    'label' => '%',
+                    'value' => function ($model) use ($total) {
+                        return round($model['count'] / $total * 100) . "%";
+                    },
+                    'footer' => $totalSummaryP
+
+                ],
+            ],
+        ]); ?>
+        <hr>
+        <?php for ($i = 1; $i <= $jml_atribut - 1; $i++) {
+        ?> <h1>P(<?= $attribute[$i] ?> = ... </h1>
+
+            <div id="w0" class="grid-view">
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <?php echo "<tr>
+                    <th style='text-align:center; width: 17%;'>
                         {$attribute[$i]}
                     </th>
-                </tr>
-                <tr>";
-                foreach ($parameter[$i] as $nilai => $param) {
-                    echo "<th>{$param}</th>";
-                }
-                echo "</tr>";
-                ?>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Layak</td>
-                    <td>5</td>
-                    <td>5</td>
-                    <td>5</td>
-                </tr>
-                <tr>
-                    <td>Tidak Layak</td>
-                    <td>2</td>
-                    <td>2</td>
-                    <td>2</td>
-                </tr>
-            </tbody>
-        </table>
+                    <th>LULUS</th>
+                    <th>TIDAK LULUS</th>";
+                        echo "</tr>";
+                        ?>
+                    </thead>
+                    <tbody>
+                        <?php
+                        foreach ($parameter[$i] as $nilai => $param) {
+
+                            echo "<td>{$param}</td>";
+
+                            foreach ($data_by_attribute[$attribute[$i]][$param] as $key => $value) {
+                                echo "<td>";
+                                echo round($value / $total * 100); 
+                                echo "%</td>";
+                            }
+                            echo "</tr>";
+                        }
+                        ?>
+                    </tbody>
+                </table>
+            </div>
+            <br>
+            <hr>
+        <?php } ?>
     </div>
-    <br>
-    <hr>
-<?php } ?>
-<?php
-//-- menampilkan tabel frekuensi/jumlah data tiap atribut
-for ($i = 2; $i <= $jml_atribut - 1; $i++) {
-    echo "<table border='1'>";
-    //-- caption tabel utk masing-masing atribut
-    echo "<caption>TABEL " . ($i + 1) . " : Jumlah Data Atribut:  {$attribute[$i]}</caption>";
-    echo "<tr><th rowspan='2'>STATUS KELAYAKAN</th><th colspan='3'>
-    {$attribute[$i]}
-    </th></tr><tr>";
-    //-- item nilai literal tiap atribut
-    foreach ($parameter[$i] as $nilai => $param) {
-        echo "<th>{$param}</th>";
-    }
-    echo "</tr>";
-    //-- iterasi utk tiap nilai kelas
-    foreach ($parameter[1] as $n => $p) {
-        echo "<tr><td>{$p}</td>";
-        //-- iterasi jumlah data/freq tiap nilai atribut
-        // for ($j = 0; $j <= 4; $j++) {
-        //     echo "<td>{$freq[$i][$j][$n]}</td>";
-        // }
-        echo "</tr>";
-    }
-    echo "</table>";
-}
-?>
+</div>

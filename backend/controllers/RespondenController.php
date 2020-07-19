@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use backend\models\Attributes;
+use backend\models\DataSample;
 use backend\models\DataTraining;
 use Yii;
 use backend\models\Responden;
@@ -325,8 +326,27 @@ class RespondenController extends Controller
         $result = $this->resultDataTraining();
         $data = $result['data'];
         $responden = $result['responden'];
-       
+
         return $this->render('naive-bayes-data-training', [
+            'data'         => $data,
+            'parameter'    => $parameter,
+            'atribut'      => $attribute,
+            'jml_atribut'  => $jml_atribut,
+            'responden'    => $responden,
+
+        ]);
+    }
+    public function actionDataSample()
+    {
+        $attribute = AttributesController::actionList();
+        $jml_atribut = count($attribute);
+        $parameter = ParameterController::actionList();
+
+        $result = $this->resultDataSample();
+        $data = $result['data'];
+        $responden = $result['responden'];
+
+        return $this->render('naive-bayes-data-sample', [
             'data'         => $data,
             'parameter'    => $parameter,
             'atribut'      => $attribute,
@@ -348,7 +368,7 @@ class RespondenController extends Controller
     public function actionFrequensiData()
     {
         $attribute = AttributesController::actionList();
-        $jml_atribut = count($attribute) + 1;
+        $jml_atribut = count($attribute);
         $parameter = ParameterController::actionList();
         $result = $this->resultDataTraining();
         $data = $result['data'];
@@ -358,11 +378,11 @@ class RespondenController extends Controller
         $countFrequensi =
             [
                 [
-                    'status' => 'Layak',
+                    'status' => 'Lulus',
                     'count'  => 0
                 ],
                 [
-                    'status' => 'Tidak Layak',
+                    'status' => 'Tidak Lulus',
                     'count' => 0,
                 ]
             ];
@@ -376,9 +396,36 @@ class RespondenController extends Controller
             // unset($value['7']);
             array_push($newData, $value);
         }
-        // die(json_encode($newData));
         $freq = $this->freq($jml_atribut);
         $prior_freq = $this->prior_freq($newData, $jml_atribut, $freq);
+
+        //bentuk data berdasarkan attribut
+        $temp = [];
+
+
+        foreach ($attribute as $keyAttribute => $valueAttribute) {
+            foreach ($parameter[$keyAttribute] as $keyParameter => $valueParameter) {
+
+                $temp[$valueAttribute][$valueParameter]['lulus'] = 0;
+                $temp[$valueAttribute][$valueParameter]['tidak_lulus'] = 0;
+
+                foreach ($data as $keyData => $valueData) {
+                    foreach ($valueData as $keyValueDataLast => $valueDataLast) {
+                        if ($keyValueDataLast == $keyAttribute) {
+                            if($keyParameter == $valueDataLast){
+                                if ($valueData[7] >= 14) {
+                                
+                                    $temp[$valueAttribute][$valueParameter]['lulus'] ++ ;
+                                } else {
+                                    $temp[$valueAttribute][$valueParameter]['tidak_lulus'] ++;
+                                }
+                            }
+                            
+                        }
+                    }
+                }
+            }
+        }
 
         return $this->render('frequensi-data', [
             'jml_atribut'  => $jml_atribut,
@@ -389,6 +436,7 @@ class RespondenController extends Controller
             'countFrequensi'    => $countFrequensi,
             'freq'    => $freq,
             'prior_freq'    => $prior_freq,
+            'data_by_attribute'    => $temp,
         ]);
     }
 
@@ -402,7 +450,7 @@ class RespondenController extends Controller
                     $freq[$i][$j][$k] = 0;
                 }
             }
-        }   
+        }
 
         return $freq;
     }
@@ -412,13 +460,13 @@ class RespondenController extends Controller
         $prior_freq = array();
         $newData = [];
         foreach ($data as  $dataValue) {
-            if($dataValue[7] < 14){
+            if ($dataValue[7] < 14) {
                 $dataValue[7] = 1;
             } else {
                 $dataValue[7] = 2;
             }
 
-            $move = $this->moveElement($dataValue, 7,1);
+            $move = $this->moveElement($dataValue, 7, 1);
             array_push($newData, $move);
         }
 
@@ -426,17 +474,16 @@ class RespondenController extends Controller
         foreach ($newData as $i => $v) {
             //-- hitung freq tiap atribut
             for ($j = 2; $j <= $jml_atribut; $j++) {
-                    $freq[$j][$v[$j]][$v[1]] += 1;
+                $freq[$j][$v[$j]][$v[1]] += 1;
             }
             // //-- hitung feq prior/kelas
             if (!isset($prior_freq[$v[1]])) $prior_freq[$v[1]] = 0;
             $prior_freq[$v[1]] += 1;
         }
-        
-        ksort( $prior_freq);
+
+        ksort($prior_freq);
 
         return $prior_freq;
-
     }
     public function resultDataTraining()
     {
@@ -469,6 +516,92 @@ class RespondenController extends Controller
             'data' => $data,
             'responden' => $responden,
         ];
+    }
+
+    public function resultDataSample()
+    {
+        $list = DataSample::find()->select(['data_sample.id', 'data_sample.id_attribute', 'id_responden', 'id_parameter', 'responden.nama', 'parameter.value'])->joinWith(['responden', 'parameterRelation'])
+            ->where(['verif_data_pelamar' => "1"])->andWhere(['verif_kesehatan' => "1"])
+            ->asArray()->all();
+        //responden
+        $data = array();
+        $responden = array();
+        $id_responden = 0;
+
+        $sumValue = 0;
+        //-- melakukan iterasi pengisian array untuk tiap record data yang didapat
+        foreach ($list as $row) {
+            if ($id_responden != $row['id_responden']) {
+                $responden[$row['id_responden']] = $row['nama'];
+                $data[$row['id_responden']] = array();
+                $id_responden = $row['id_responden'];
+                $sumValue = 0;
+            }
+
+            if ($id_responden == $row['id_responden']) {
+                $sumValue += $row['value'];
+            }
+            $data[$row['id_responden']][$row['id_attribute']] = $row['value'];
+            $data[$row['id_responden']][$row['id_attribute'] + 1] = $sumValue;
+            $data[$row['id_responden']]['responden'] = $row['id_responden'];
+        }
+
+
+        return [
+            'data' => $data,
+            'responden' => $responden,
+        ];
+    }
+
+    public function actionProcessDataSample()
+    {
+        Yii::$app->db->createCommand()->truncateTable('data_sample')->execute();
+        $list = DataTraining::find()->select(['data_training.id', 'data_training.id_attribute', 'id_responden', 'id_parameter', 'responden.nama', 'parameter.value'])->joinWith(['responden', 'parameterRelation'])
+            ->where(['verif_data_pelamar' => "1"])->andWhere(['verif_kesehatan' => "1"])
+            ->asArray()->all();
+        //responden
+        $data = array();
+        $responden = array();
+        $id_responden = 0;
+
+        $sumValue = 0;
+        //-- melakukan iterasi pengisian array untuk tiap record data yang didapat
+        foreach ($list as $row) {
+            if ($id_responden != $row['id_responden']) {
+                $responden[$row['id_responden']] = $row['nama'];
+                $data[$row['id_responden']] = array();
+                $id_responden = $row['id_responden'];
+                $sumValue = 0;
+            }
+
+            if ($id_responden == $row['id_responden']) {
+                $sumValue += $row['value'];
+            }
+            $data[$row['id_responden']][$row['id_attribute']] = $row['value'];
+            $data[$row['id_responden']][$row['id_attribute'] + 1] = $sumValue;
+            $data[$row['id_responden']]['responden'] = $row['id_responden'];
+        }
+
+        shuffle($data);
+        $newData = array_slice($data, 1, 50);
+        foreach ($newData as $value) {
+            foreach ($value as $key => $values) {
+                if ($key != 7 && $key != "responden") {
+                    $dataSample = new DataSample();
+                    $dataSample->id_responden = $value['responden'];
+                    $dataSample->id_attribute = $key;
+                    $dataSample->id_parameter = $this->getParameterByAttributeValue($key, $values);
+                    $dataSample->save();
+                }
+            }
+        }
+        return $this->redirect('data-sample');
+    }
+
+    public function getParameterByAttributeValue($attribute, $value)
+    {
+        return Parameter::find()->where(['id_attribute' => $attribute])->andWhere(['value' => $value])
+            ->one()['id'];
     }
     public function sendEmail($params)
     {
