@@ -18,6 +18,8 @@ use yii\helpers\Html;
                         <?php for ($i = 1; $i <= $jml_atribut; $i++) {
                             echo "<th>{$atribut[$i]}</th>";
                         } ?>
+                        <th>Prediksi</th>
+
                     </tr>
                 </thead>
                 <tbody>
@@ -33,6 +35,18 @@ use yii\helpers\Html;
                             for ($i = 1; $i <= $jml_atribut; $i++) {
 
                                 echo "<td>{$parameter[$i][$dt_atribut[$i]]}</td>";
+                            }
+                            switch (true) {
+                                case $dt_atribut[7] >= 14:
+                                    echo "<td style='color:blue'><b><i>Lulus</i></b></td>";
+                                    break;
+                                case $dt_atribut[7] < 14:
+                                    echo "<td style='color:red'><b><i> Tidak Lulus</i></b></td>";
+                                    break;
+
+                                default:
+                                    # code...
+                                    break;
                             }
 
                             echo "</tr>";
