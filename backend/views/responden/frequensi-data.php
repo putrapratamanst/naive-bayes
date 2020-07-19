@@ -56,12 +56,16 @@ $totalSummaryP = round($total / $total * 100) . "%";
 
                             foreach ($data_by_attribute[$attribute[$i]][$param] as $key => $value) {
                                 echo "<td>";
-                                echo round($value / $total * 100); 
+                                echo "Jumlah: " . $value;
+                                echo " | Persentase: " . round($value / $total * 100);
                                 echo "%</td>";
                             }
                             echo "</tr>";
                         }
                         ?>
+                        <tr>
+                            <td colspan='3' style="text-align:center">Total: 100%</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
