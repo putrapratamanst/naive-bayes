@@ -42,6 +42,7 @@ $user = Yii::$app->user->identity;
                             <li><a href="/responden/data-training">Data Training</a></li>
                             <li><a href="/responden/frequensi-data">Frekuensi Data</a></li>
                             <li><a href="/responden/data-sample">Data Testing</a></li>
+                            <li><a href="/responden/data-testing-prediksi">Prediksi Data Testing</a></li>
                         </ul>
                     </li>
                 </ul>
