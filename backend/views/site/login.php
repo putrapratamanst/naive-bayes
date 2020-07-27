@@ -15,7 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="row">
         <div class="col-lg-12">
-            <img src="<?= Yii::getAlias('@web/template/production/') ?>images/login.png" alt="..." class="img profile_img" width="350">
+            <img src="<?= Yii::getAlias('@web/template/production/') ?>images/user.png" alt="..." class="img profile_img" width="350">
             <?php $form = ActiveForm::begin(['id' => 'login-form', 'options' => ['autocomplete' => 'off']]); ?>
 
             <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>

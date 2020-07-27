@@ -1,7 +1,7 @@
 <!-- footer content -->
 <footer>
     <div class="pull-right">
-        BANK CENTRAL ASIA <a href="/"><?= date('Y')?></a>
+        PERBANKAN INDONESIA <a href="/"><?= date('Y')?></a>
     </div>
     <div class="clearfix"></div>
 </footer>

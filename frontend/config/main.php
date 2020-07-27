@@ -8,7 +8,7 @@ $params = array_merge(
 
 return [
     'id' => 'app-frontend',
-    'name'=>"BANK CENTRAL ASIA",
+    'name'=>"PERBANKAN INDONESIA",
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',

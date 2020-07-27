@@ -33,7 +33,7 @@ class SiteController extends Controller
                 'only' => ['logout', 'signup'],
                 'rules' => [
                     [
-                        'actions' => ['signup'],
+                        'actions' => ['signup','home'],
                         'allow' => true,
                         'roles' => ['?'],
                     ],
@@ -67,6 +67,12 @@ class SiteController extends Controller
                 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
             ],
         ];
+    }
+
+    public function actionHome()
+    {
+        $this->layout = 'main2';
+        return $this->render('home');
     }
 
     /**
@@ -130,8 +136,9 @@ class SiteController extends Controller
     public function actionLogout()
     {
         Yii::$app->user->logout();
+        return $this->redirect('home');
 
-        return $this->goHome();
+        // return $this->goHome();
     }
 
     /**
