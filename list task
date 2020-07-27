@@ -1,0 +1,5 @@
+1. frontend : landing page kayak bca
+2. backend: perhitungan table confusion masih salah(harusnya jumlah total data sample)
+3. daftarkan data sample kayak daftar biasa, nnti ada menu untuk memilih siapa yg jadi sample (data sample bukan bagian data training)
+4. kirim email setiap verifikasi
+5. klo misal ada pelamar baru diluar data testing, munculkan tombol prediksi (kalkuklasi lolos atau tidak)
