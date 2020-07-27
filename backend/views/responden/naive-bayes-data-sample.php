@@ -7,7 +7,8 @@ use yii\helpers\Html;
     <div class="attributes-index">
 
         <h1>Data Sample</h1>
-        <?= Html::a('Generate New Sample', ['process-data-sample'], ['class' => 'btn btn-success']) ?>
+        <!-- Html::a('Generate New Sample', ['process-data-sample'], ['class' => 'btn btn-success'])  -->
+        <?= Html::a('Create Data Sample', ['create-data-sample'], ['class' => 'btn btn-success']) ?>
 
         <div id="w0" class="grid-view">
             <table class="table table-striped table-bordered">

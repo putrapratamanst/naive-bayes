@@ -9,9 +9,11 @@ use Yii;
 use backend\models\Responden;
 use backend\models\RespondenSearch;
 use frontend\models\Parameter;
+use PHPUnit\Framework\Constraint\Attribute;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 
 /**
  * RespondenController implements the CRUD actions for Responden model.
@@ -31,6 +33,11 @@ class RespondenController extends Controller
                 ],
             ],
         ];
+    }
+    public function beforeAction($action)
+    {
+        $this->enableCsrfValidation = false;
+        return parent::beforeAction($action);
     }
 
     /**
@@ -485,8 +492,9 @@ class RespondenController extends Controller
     public function resultDataTraining()
     {
         $list = DataTraining::find()->select(['data_training.id', 'data_training.id_attribute', 'id_responden', 'id_parameter', 'responden.nama', 'parameter.value'])->joinWith(['responden', 'parameterRelation'])
-            ->where(['verif_data_pelamar' => "1"])->andWhere(['verif_kesehatan' => "1"])
+            ->where(['verif_data_pelamar' => "1"])->andWhere(['verif_kesehatan' => "1"])->andWhere(['is_sample' => false])->orWhere(['is_sample' => NULL])
             ->asArray()->all();
+        
         //responden
         $data = array();
         $responden = array();
@@ -518,7 +526,7 @@ class RespondenController extends Controller
     public function resultDataSample()
     {
         $list = DataSample::find()->select(['data_sample.id', 'data_sample.id_attribute', 'id_responden', 'id_parameter', 'responden.nama', 'parameter.value'])->joinWith(['responden', 'parameterRelation'])
-            ->where(['verif_data_pelamar' => "1"])->andWhere(['verif_kesehatan' => "1"])
+            ->where(['is_sample' => true])
             ->asArray()->all();
         //responden
         $data = array();
@@ -709,5 +717,58 @@ class RespondenController extends Controller
             'dataResultSample'    => $dataResultSample,
         ]);
 
+    }
+
+    public function actionCreateDataSample()
+    {
+        $pendidikan = Parameter::find()->select(['id', 'parameter_name'])->where(['id_attribute' => 1])->asArray()->all();
+        $dataPendidikan = ArrayHelper::map($pendidikan, 'id', 'parameter_name');
+
+        $ipk = Parameter::find()->select(['id', 'parameter_name'])->where(['id_attribute' => 2])->asArray()->all();
+        $dataIpk = ArrayHelper::map($ipk, 'id', 'parameter_name');
+
+        $pengalamanKerja = Parameter::find()->select(['id', 'parameter_name'])->where(['id_attribute' => 3])->asArray()->all();
+        $dataPengalamanKerja = ArrayHelper::map($pengalamanKerja, 'id', 'parameter_name');
+
+        $umur = Parameter::find()->select(['id', 'parameter_name'])->where(['id_attribute' => 4])->asArray()->all();
+        $dataUmur = ArrayHelper::map($umur, 'id', 'parameter_name');
+
+        $psikotes = Parameter::find()->select(['id', 'parameter_name'])->where(['id_attribute' => 5])->asArray()->all();
+        $dataPsikotes = ArrayHelper::map($psikotes, 'id', 'parameter_name');
+
+        $iq = Parameter::find()->select(['id', 'parameter_name'])->where(['id_attribute' => 6])->asArray()->all();
+        $dataIq = ArrayHelper::map($iq, 'id', 'parameter_name');
+
+
+       return $this->render('create-data-sample', [
+           'dataPendidikan' => $dataPendidikan,
+           'dataIpk' => $dataIpk,
+           'dataPengalamanKerja' => $dataPengalamanKerja,
+           'dataUmur' => $dataUmur,
+           'dataPsikotes' => $dataPsikotes,
+           'dataIq' => $dataIq,
+       ]);
+    }
+
+    public function actionProcessCreateSample()
+    {
+        $attribute = Attributes::find()->asArray()->all();
+        
+        $post = Yii::$app->request->post();
+        $responden = new Responden();
+        $responden->nama = $post['nama_lengkap'];
+        $responden->jenis_kelamin = $post['gender'];
+        $responden->is_sample = true;
+        $responden->save();
+
+        foreach ($attribute as $key => $value) {
+            $sample = new DataSample();
+            $sample->id_responden = (int)$responden['id'];
+            $sample->id_attribute = (int)$value['id'];
+            $sample->id_parameter = (int)$post[$value['id']];
+            $sample->save();
+        }
+
+        return $this->redirect('data-sample');
     }
 }

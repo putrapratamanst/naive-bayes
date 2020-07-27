@@ -40,7 +40,7 @@ class RespondenSearch extends Responden
      */
     public function search($params)
     {
-        $query = Responden::find();
+        $query = Responden::find()->where(['is_sample' => false])->orWhere(['is_sample' => NULL]);
 
         // add conditions that should always apply here
 
@@ -68,7 +68,7 @@ class RespondenSearch extends Responden
     }
     public function searchFisik($params)
     {
-        $query = Responden::find()->where(['verif_data_pelamar' => "1"]);
+        $query = Responden::find()->where(['verif_data_pelamar' => "1"])->andWhere(['is_sample' => false])->orWhere(['is_sample' => NULL]);
 
         // add conditions that should always apply here
 
@@ -96,7 +96,7 @@ class RespondenSearch extends Responden
     }
     public function searchWawancara($params)
     {
-        $query = Responden::find()->where(['verif_data_pelamar' => "1"])->andWhere(['verif_kesehatan' => "1"]);
+        $query = Responden::find()->where(['verif_data_pelamar' => "1"])->andWhere(['verif_kesehatan' => "1"])->andWhere(['is_sample' => false])->orWhere(['is_sample' => NULL]);
 
         // add conditions that should always apply here
 
