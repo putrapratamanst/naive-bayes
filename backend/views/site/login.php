@@ -10,11 +10,12 @@ use yii\bootstrap\ActiveForm;
 $this->title = 'Login';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+
 <div class="site-login">
 
     <div class="row">
         <div class="col-lg-12">
-            <img src="<?= Yii::getAlias('@web/template/production/') ?>images/logo_bca.png" alt="..." class="img profile_img">
+            <img src="<?= Yii::getAlias('@web/template/production/') ?>images/login.png" alt="..." class="img profile_img" width="350">
             <?php $form = ActiveForm::begin(['id' => 'login-form', 'options' => ['autocomplete' => 'off']]); ?>
 
             <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
@@ -31,7 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 <div class="separator">
     <div>
-        <h1><i class="fa fa-home"></i> BANK CENTRAL ASIA</h1>
-        <p>©<?= date('Y'); ?> All Rights Reserved. BANK CENTRAL ASIA</p>
+        <h1><i class="fa fa-home"></i> PERBANKAN INDONESIA</h1>
+        <p>©<?= date('Y'); ?> All Rights Reserved. PERBANKAN INDONESIA</p>
     </div>
 </div>

@@ -4,7 +4,7 @@ $user = Yii::$app->user->identity;
 <div class="col-md-3 left_col">
     <div class="left_col scroll-view">
         <div class="navbar nav_title" style="border: 0;">
-            <a href="/" class="site_title"> <span> Bank Central Asia </span></a>
+            <a href="/" class="site_title"> <span> PERBANKAN INDONESIA </span></a>
         </div>
 
         <div class="clearfix"></div>
@@ -12,7 +12,7 @@ $user = Yii::$app->user->identity;
         <!-- menu profile quick info -->
         <div class="profile clearfix">
             <div class="profile_pic">
-                <img src="<?= Yii::getAlias('@web/template/production/') ?>images/logo_bca.png" alt="..." class="img-circle profile_img">
+                <img src="<?= Yii::getAlias('@web/template/production/') ?>images/user.png" alt="..." class="img-circle profile_img">
             </div>
             <div class="profile_info">
                 <span>Welcome,</span>
