@@ -54,13 +54,13 @@ $totalSummaryP = round($total / $total * 100) . "%";
 
                                         <?php
                                         switch (true) {
-                                            case $valuedataResultSample[7] >= 14:
+                                            case $valuedataResultSample[7] >= 13:
                                                 echo "<td style='color:blue'><b><i>Lulus</i></b></td>";
                                                 $awalLolos = true;
                                                 $awalTidakLolos = false;
 
                                                 break;
-                                            case $valuedataResultSample[7] < 14:
+                                            case $valuedataResultSample[7] < 13:
                                                 echo "<td style='color:red'><b><i> Tidak Lulus</i></b></td>";
                                                 $awalTidakLolos = true;
                                                 $awalLolos = false;

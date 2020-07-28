@@ -29,11 +29,11 @@
                             }
                             
                             switch (true) {
-                                case $dt_atribut[7] >= 14:
+                                case $dt_atribut[7] >= 13:
                                     echo "<td style='color:blue'><b><i>Lulus</i></b></td>";
                                     break;
-                                case $dt_atribut[7] < 14:
-                                    echo "<td style='color:red'><b><i> Tidak Lulus</i></b></td>";
+                                case $dt_atribut[7] < 13:
+                                    echo "<td style='color:red'><b><i>Tidak Lulus</i></b></td>";
                                     break;
                                 
                                 default:

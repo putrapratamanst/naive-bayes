@@ -395,7 +395,7 @@ class RespondenController extends Controller
             ];
 
         foreach ($data as $key => $value) {
-            if ($value['7'] < 14) {
+            if ($value['7'] < 13) {
                 $countFrequensi[1]['count']++;
             } else {
                 $countFrequensi[0]['count']++;
@@ -420,7 +420,7 @@ class RespondenController extends Controller
                     foreach ($valueData as $keyValueDataLast => $valueDataLast) {
                         if ($keyValueDataLast == $keyAttribute) {
                             if($keyParameter == $valueDataLast){
-                                if ($valueData[7] >= 14) {
+                                if ($valueData[7] >= 13) {
                                     $temp[$valueAttribute][$valueParameter]['lulus']['jumlah'] ++ ;
                                 } else {
                                     $temp[$valueAttribute][$valueParameter]['tidak_lulus']['jumlah'] ++;
@@ -464,7 +464,7 @@ class RespondenController extends Controller
         $prior_freq = array();
         $newData = [];
         foreach ($data as  $dataValue) {
-            if ($dataValue[7] < 14) {
+            if ($dataValue[7] < 13) {
                 $dataValue[7] = 1;
             } else {
                 $dataValue[7] = 2;
@@ -655,7 +655,7 @@ class RespondenController extends Controller
             ];
 
         foreach ($data as $key => $value) {
-            if ($value['7'] < 14) {
+            if ($value['7'] < 13) {
                 $countFrequensi[1]['count']++;
             } else {
                 $countFrequensi[0]['count']++;
@@ -677,7 +677,7 @@ class RespondenController extends Controller
                     foreach ($valueData as $keyValueDataLast => $valueDataLast) {
                         if ($keyValueDataLast == $keyAttribute) {
                             if ($keyParameter == $valueDataLast) {
-                                if ($valueData[7] >= 14) {
+                                if ($valueData[7] >= 13) {
                                     $temp[$valueAttribute][$valueParameter]['lulus']['jumlah']++;
                                 } else {
                                     $temp[$valueAttribute][$valueParameter]['tidak_lulus']['jumlah']++;
