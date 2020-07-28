@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use frontend\models\DataSample;
 use DateTime;
 use frontend\models\Attributes;
 use frontend\models\DataTraining;
@@ -87,6 +88,40 @@ class RespondenController extends Controller
             'model' => $this->findModel($id),
         ]);
     }
+    public function actionViewSample($id)
+    {
+
+        $this->layout = 'main-sample'; //your layout name
+        $request = Yii::$app->request;
+        $idResponden = $request->get('id');
+        $getAllDataSample = DataSample::find()
+            ->select([
+                'data_sample.id as id',
+                'id_responden',
+                'parameter.value as value',
+                'parameter.parameter_name as parameter_name',
+                'attributes.attribute_name as attribute_name',
+                'attributes.id as id_attribute',
+            ])
+            ->leftJoin('attributes', 'data_sample.id_attribute = attributes.id')
+            ->leftJoin('parameter', 'data_sample.id_parameter = parameter.id')
+            ->where(['id_responden' => $idResponden])->asArray()->all();
+
+        if (!$getAllDataSample) {
+            $getAttribute = Attributes::find()->asArray()->all();
+            foreach ($getAttribute as $value) {
+                $modelDataSample = new DataSample();
+                $modelDataSample->scenario = "lamaran";
+                $modelDataSample->id_responden = $idResponden;
+                $modelDataSample->id_attribute = $value['id'];
+                $modelDataSample->save();
+            }
+        }
+
+        return $this->render('view-sample', [
+            'model' => $this->findModel($id),
+        ]);
+    }
 
     /**
      * Creates a new Responden model.
@@ -117,7 +152,6 @@ class RespondenController extends Controller
     {
         $model = $this->findModel($id);
         // $model->scenario = 'update';
-
         if ($model->load(Yii::$app->request->post())) {
             $cv         = UploadedFile::getInstance($model, 'cv');
             $ijazah     = UploadedFile::getInstance($model, 'ijazah');
@@ -161,6 +195,7 @@ class RespondenController extends Controller
                             break;
                     }
                 }
+
             $dataTraining  = DataTraining::find()->where(['id_responden' => $id])->andWhere(['id_attribute' => 4])->one();
             $dataParam  = Parameter::find()->where(['value' => $umur])->andWhere(['id_attribute' => 4])->one();
             $dataTraining->id_parameter = $dataParam->id;
@@ -172,6 +207,73 @@ class RespondenController extends Controller
                 // die(json_encode($model->errors));
             // }
             return $this->redirect(['view', 'id' => $model->id]);
+        }
+
+        return $this->render('update', [
+            'model' => $model,
+        ]);
+    }
+    public function actionUpdateSample($id)
+    {
+        $this->layout = 'main-sample'; //your layout name
+
+        $model = $this->findModel($id);
+        // $model->scenario = 'update';
+        if ($model->load(Yii::$app->request->post())) {
+            $cv         = UploadedFile::getInstance($model, 'cv');
+            $ijazah     = UploadedFile::getInstance($model, 'ijazah');
+            $portofolio = UploadedFile::getInstance($model, 'portofolio');
+
+            if (!empty($cv)) {
+                $cvToSave = Yii::getAlias('@frontend/web/uploads/cv/') . 'CV_' . $model['nama'] . "." . $cv->extension;
+                $cv->saveAs($cvToSave);
+                $model->cv = $cvToSave;
+            }
+            if (!empty($ijazah)) {
+                $ijazahToSave = Yii::getAlias('@frontend/web/uploads/ijazah/') . 'IJAZAH_' . $model['nama'] . "." . $ijazah->extension;
+                $ijazah->saveAs($ijazahToSave);
+                $model->ijazah = $ijazahToSave;
+            }
+            if (!empty($portofolio)) {
+                $portofolioToSave = Yii::getAlias('@frontend/web/uploads/portofolio/') . 'PORTOFOLIO_' . $model['nama'] . "." . $portofolio->extension;
+                $portofolio->saveAs($portofolioToSave);
+                $model->portofolio = $portofolioToSave;
+            }
+
+            if(!empty($model->tanggal_lahir)){
+                $birthDate = new DateTime($model->tanggal_lahir);
+                $today = new DateTime("today");
+                if ($birthDate < $today) {
+                    $y = $today->diff($birthDate)->y;
+                    $umur = "";
+                    switch (true) {
+                        case ($y >=19 && $y <= 24) :
+                            $umur = 1;
+                            break;
+                        case ($y >=25 && $y <= 30) :
+                            $umur = 2;
+                            break;
+                        case $y >= 30:
+                            $umur = 3;
+                            break;
+                        
+                        default:
+                            # code...
+                            break;
+                    }
+                }
+
+            $dataSample  = DataSample::find()->where(['id_responden' => $id])->andWhere(['id_attribute' => 4])->one();
+            $dataParam  = Parameter::find()->where(['value' => $umur])->andWhere(['id_attribute' => 4])->one();
+            $dataSample->id_parameter = $dataParam->id;
+            $dataSample->save();
+
+            }
+            // if(!$model->save()){
+            $model->save(false);
+                // die(json_encode($model->errors));
+            // }
+            return $this->redirect(['view-sample', 'id' => $model->id]);
         }
 
         return $this->render('update', [

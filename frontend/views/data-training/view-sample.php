@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <br>
 
     <p>
-        <?= Html::a('Back', ['/'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Back', ['/responden/view-sample', 'id' => $idResponden], ['class' => 'btn btn-success']) ?>
      
     </p>
 

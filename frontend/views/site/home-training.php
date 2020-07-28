@@ -27,8 +27,8 @@
                                 if (Yii::$app->user->isGuest) { ?>
                                     <!-- <a class="button button-primary" href="login">LOGIN</a> -->
                                     <!-- <a class="button button-danger" href="signup">DAFTAR</a> -->
-                                    <a class="button button-primary" href="login-sample">LOGIN</a>
-                                    <a class="button button-danger" href="signup-sample">DAFTAR</a>
+                                    <a class="button button-primary" href="login">LOGIN</a>
+                                    <a class="button button-danger" href="signup">DAFTAR</a>
                                 <?php } else { ?>
                                     <a class="button button-danger" href="<?=  Yii::$app->request->referrer ?>">BACK</a>
                                 <?php } ?>

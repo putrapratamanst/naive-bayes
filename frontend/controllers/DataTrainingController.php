@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use frontend\models\DataSample;
 use frontend\models\Attributes;
 use Yii;
 use frontend\models\DataTraining;
@@ -97,6 +98,45 @@ class DataTrainingController extends Controller
         ]);
     }
 
+    public function actionViewSample($id)
+    {
+        $this->layout = 'main-sample'; //your layout name
+
+        $request = Yii::$app->request;
+        $idResponden = $request->get('id');
+        $umur = Responden::find()->where(['id' => $idResponden])->one();
+        $getAllDataSample = DataSample::find()
+            ->select([
+                'data_sample.id as id',
+                'id_responden',
+                'parameter.value as value',
+                'parameter.parameter_name as parameter_name',
+                'attributes.attribute_name as attribute_name','attributes.id as id_attribute',
+
+            ])
+            ->leftJoin('attributes', 'data_sample.id_attribute = attributes.id')
+            ->leftJoin('parameter', 'data_sample.id_parameter = parameter.id')
+            ->where(['id_responden' => $idResponden])->asArray()->all();
+
+       
+        // if(!$getAllDataSample){
+
+        //     return $this->redirect(['create-pendidikan', 'id' => $idResponden]);
+        // }
+        $provider = new ArrayDataProvider([
+            'allModels' => $getAllDataSample,
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+        ]);
+        
+        return $this->render('view-sample', [
+            'provider'=> $provider,
+            'umur'=> $umur->tanggal_lahir,
+            'idResponden'=> $idResponden,
+        ]);
+    }
+
     /**
      * Creates a new DataTraining model.
      * If creation is successful, the browser will be redirected to the 'view' page.
@@ -143,6 +183,36 @@ class DataTrainingController extends Controller
         ]);
     }
 
+    public function actionCreatePendidikanSample()
+    {
+        $this->layout = 'main-sample'; //your layout name
+
+        $request = Yii::$app->request;
+        $idResponden = $request->get('id');
+        $model  = DataSample::find()->where(['id_responden' => $idResponden])->andWhere(['id_attribute'=> 1])->one();
+
+        $idAttribute = Attributes::find()->where(['attribute_name' => 'Pendidikan'])->one();
+
+        $parameter = Parameter::find()->select(['id','value','parameter_name'])->where(['id_attribute' => 1])->asArray()->all();
+        $newParameter = [];
+
+        foreach ($parameter as  $value) {
+            $newParameter[$value['id']] = $value['parameter_name'];
+        }   
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view-sample', 'id' => $idResponden]);
+        }
+
+        return $this->render('create-pendidikan', [
+            'model' => $model,
+            'attribute' => $idAttribute->attribute_name,
+            'parameter' => $newParameter,
+            'prompt'    => "Pilih Pendidikan"
+
+        ]);
+    }
+
     public function actionCreateIpk()
     {
         $request = Yii::$app->request;
@@ -160,6 +230,34 @@ class DataTrainingController extends Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $idResponden]);
+        }
+
+        return $this->render('create-pendidikan', [
+            'model' => $model,
+            'attribute' => $idAttribute->attribute_name,
+            'parameter' => $newParameter,
+            'prompt'    => "Pilih IPK"
+        ]);
+    }
+    public function actionCreateIpkSample()
+    {
+        $this->layout = 'main-sample'; //your layout name
+
+        $request = Yii::$app->request;
+        $idResponden = $request->get('id');
+        $model  = DataSample::find()->where(['id_responden' => $idResponden])->andWhere(['id_attribute'=> 2])->one();
+
+        $idAttribute = Attributes::find()->where(['attribute_name' => 'IPK'])->one();
+
+        $parameter = Parameter::find()->select(['id','value','parameter_name'])->where(['id_attribute' => 2])->asArray()->all();
+        $newParameter = [];
+
+        foreach ($parameter as  $value) {
+            $newParameter[$value['id']] = $value['parameter_name'];
+        }   
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view-sample', 'id' => $idResponden]);
         }
 
         return $this->render('create-pendidikan', [
@@ -187,6 +285,35 @@ class DataTrainingController extends Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $idResponden]);
+        }
+
+        return $this->render('create-pendidikan', [
+            'model' => $model,
+            'attribute' => $idAttribute->attribute_name,
+            'parameter' => $newParameter,
+            'prompt'    => "Pilih Pengalaman Kerja"
+        ]);
+    }
+    
+    public function actionCreatePengalamanKerjaSample()
+    {
+        $this->layout = 'main-sample'; //your layout name
+
+        $request = Yii::$app->request;
+        $idResponden = $request->get('id');
+        $model  = DataSample::find()->where(['id_responden' => $idResponden])->andWhere(['id_attribute'=> 3])->one();
+
+        $idAttribute = Attributes::find()->where(['attribute_name' => 'Pengalaman Kerja'])->one();
+
+        $parameter = Parameter::find()->select(['id','value','parameter_name'])->where(['id_attribute' => 3])->asArray()->all();
+        $newParameter = [];
+
+        foreach ($parameter as  $value) {
+            $newParameter[$value['id']] = $value['parameter_name'];
+        }   
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view-sample', 'id' => $idResponden]);
         }
 
         return $this->render('create-pendidikan', [
@@ -262,6 +389,23 @@ class DataTrainingController extends Controller
             'action'=> "/data-training/proses-psikotes/"
         ]);
     }
+    public function actionCreatePsikotesSample()
+    {
+        $this->layout = 'main-sample'; //your layout name
+
+        Yii::$app->controller->enableCsrfValidation = false;
+
+        $request = Yii::$app->request;
+        $idResponden = $request->get('id');
+
+        $soal = Soal::find()->where(['type' => 1])->asArray()->all();
+        return $this->render('form_psikotes', [
+            'soal' => $soal,
+            'idResponden' => $idResponden,
+            'judulTes'=> "PSIKOTES",
+            'action'=> "/data-training/proses-psikotes-sample/"
+        ]);
+    }
 
     public function actionProsesPsikotes()
     {
@@ -316,6 +460,61 @@ class DataTrainingController extends Controller
         return $this->redirect(['view', 'id' => $idResponden]);
 
     }
+    public function actionProsesPsikotesSample()
+    {
+        $this->layout = 'main-sample'; //your layout name
+
+        Yii::$app->controller->enableCsrfValidation = false;
+
+        $post = Yii::$app->request->post();
+       
+        $idResponden = $post['idResponden'];
+ 
+        $pilihan = isset($post['pilihan']) ? $post['pilihan'] : [];
+        if(count($pilihan) < 10){
+            Yii::$app->session->setFlash('danger', "Anda belum menyelesaikan Psikotes!");
+            return $this->redirect(['create-psikotes', 'id' => $idResponden]);
+        }
+
+        $hasilPsikotes = 0;
+        foreach ($pilihan as $key => $pilihans) {
+            $salahBenar = Pilihan::find()
+                ->select('benar_salah')
+                ->where(['id_soal' => $key])
+                ->andWhere(['pilihan' => $pilihans])
+                ->asArray()
+                ->one();
+            $jawaban = new Jawaban();
+            $jawaban->id_responden = $idResponden;
+            $jawaban->id_soal = $key;
+            $jawaban->type = 1;
+            $jawaban->jawaban = $pilihans;
+            $jawaban->benar_salah = $salahBenar['benar_salah'];
+            if (!$jawaban->save()) {
+                echo "<pre>";
+                print_r($jawaban->errors);
+                die;
+            }
+            if($salahBenar['benar_salah'] == 1){
+                $hasilPsikotes = $hasilPsikotes + 10;
+            }
+        }
+
+        $dataSample = DataSample::find()
+            ->where(['id_responden' => $idResponden])
+            ->andWhere((['id_attribute' => 5]))
+            ->one();
+        if($hasilPsikotes > 50){
+            $dataSample->id_parameter = 14;
+            $dataSample->save(false);
+        } else {
+            $dataSample->id_parameter = 13;
+            $dataSample->save(false);
+        }
+
+        return $this->redirect(['view-sample', 'id' => $idResponden]);
+
+    }
 
     public function actionCreateIq()
     {
@@ -330,6 +529,23 @@ class DataTrainingController extends Controller
             'idResponden' => $idResponden,
             'judulTes' => "TEST IQ",
             'action' => "/data-training/proses-iq/"
+        ]);
+    }
+    public function actionCreateIqSample()
+    {
+        $this->layout = 'main-sample'; //your layout name
+
+        Yii::$app->controller->enableCsrfValidation = false;
+
+        $request = Yii::$app->request;
+        $idResponden = $request->get('id');
+
+        $soal = Soal::find()->where(['type' => 2])->asArray()->all();
+        return $this->render('form_psikotes', [
+            'soal' => $soal,
+            'idResponden' => $idResponden,
+            'judulTes' => "TEST IQ",
+            'action' => "/data-training/proses-iq-sample/"
         ]);
     }
 
@@ -382,5 +598,57 @@ class DataTrainingController extends Controller
         }
 
         return $this->redirect(['view', 'id' => $idResponden]);
+    }
+    public function actionProsesIqSample()
+    {
+        $this->layout = 'main-sample'; //your layout name
+
+        Yii::$app->controller->enableCsrfValidation = false;
+
+        $post = Yii::$app->request->post();
+
+        $idResponden = $post['idResponden'];
+
+        $pilihan = isset($post['pilihan']) ? $post['pilihan'] : [];
+        if (count($pilihan) < 10) {
+            Yii::$app->session->setFlash('danger', "Anda belum menyelesaikan Psikotes!");
+            return $this->redirect(['create-psikotes', 'id' => $idResponden]);
+        }
+
+        $hasilPsikotes = 0;
+        foreach ($pilihan as $key => $pilihans) {
+            $salahBenar = Pilihan::find()
+                ->select('benar_salah')
+                ->where(['id_soal' => $key])
+                ->andWhere(['pilihan' => $pilihans])
+                ->asArray()
+                ->one();
+            $jawaban = new Jawaban();
+            $jawaban->id_responden = $idResponden;
+            $jawaban->id_soal = $key;
+            $jawaban->type = 2;
+            $jawaban->jawaban = $pilihans;
+            $jawaban->benar_salah = $salahBenar['benar_salah'];
+            if(!$jawaban->save()){
+                echo"<pre>";print_r($jawaban->errors);die;
+            }
+            if ($salahBenar['benar_salah'] == 1) {
+                $hasilPsikotes = $hasilPsikotes + 10;
+            }
+        }
+
+        $dataSample = DataSample::find()
+            ->where(['id_responden' => $idResponden])
+            ->andWhere((['id_attribute' => 6]))
+            ->one();
+        if ($hasilPsikotes > 50) {
+            $dataSample->id_parameter = 16;
+            $dataSample->save(false);
+        } else {
+            $dataSample->id_parameter = 15;
+            $dataSample->save(false);
+        }
+
+        return $this->redirect(['view-sample', 'id' => $idResponden]);
     }
 }

@@ -16,8 +16,8 @@ $this->title = $model->nama;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Ubah Data Pelamar', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-         <?= Html::a('Form Lamaran', ['/data-training/view', 'id' => $model->id], ['class' => 'btn btn-success pull-right']) ?>
+        <?= Html::a('Ubah Data Pelamar', ['update-sample', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+         <?= Html::a('Form Lamaran', ['/data-training/view-sample', 'id' => $model->id], ['class' => 'btn btn-success pull-right']) ?>
          <!-- Html::a('Delete', ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
             'data' => [

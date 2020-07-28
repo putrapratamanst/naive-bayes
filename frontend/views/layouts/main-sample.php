@@ -30,7 +30,7 @@ AppAsset::register($this);
     <?php
     NavBar::begin([
         'brandLabel' => Yii::$app->name,
-        'brandUrl' => '/site/home-training',
+        'brandUrl' => '/site/home',
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
@@ -41,13 +41,13 @@ AppAsset::register($this);
         // ['label' => 'Contact', 'url' => ['/site/contact']],
     ];
     if (Yii::$app->user->isGuest) {
-        $menuItems[] = ['label' => 'Signup', 'url' => ['/site/signup']];
-        $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
+        $menuItems[] = ['label' => 'Signup', 'url' => ['/site/signup-sample']];
+        $menuItems[] = ['label' => 'Login', 'url' => ['/site/login-sample']];
     } else {
         // $menuItems[] = ['label' => 'Data Pelamar', 'url' => ['/responden/update']];
         
         $menuItems[] = '<li>'
-            . Html::beginForm(['/site/logout'], 'post')
+            . Html::beginForm(['/site/logout-sample'], 'post')
             . Html::submitButton(
                 'Logout (' . Yii::$app->user->identity->username . ')',
                 ['class' => 'btn btn-link logout']

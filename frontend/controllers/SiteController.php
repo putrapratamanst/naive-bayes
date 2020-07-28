@@ -75,6 +75,12 @@ class SiteController extends Controller
         return $this->render('home');
     }
 
+    public function actionHomeTraining()
+    {
+        $this->layout = 'main2';
+        return $this->render('home-training');
+    }
+
     /**
      * Displays homepage.
      *
@@ -108,14 +114,15 @@ class SiteController extends Controller
         }
 
         $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+        if ($model->load(Yii::$app->request->post())) {
             $post = Yii::$app->request->post();
             $loginForm = $post['LoginForm'];
 
-            $responden = Responden::find()->where(['nama' => $loginForm['username']])->one();
+            $responden = Responden::find()->where(['nama' => $loginForm['username']])->andWhere(['is_sample' => NULL])->one();
             if(!$responden){
                     throw new \yii\web\NotFoundHttpException("You Cannot Access This Page!");
             }
+            $model->login();
             return $this->redirect(['/responden/view', 'id' => $responden->id]);
 
             // return $this->goBack();
@@ -127,6 +134,35 @@ class SiteController extends Controller
             ]);
         }
     }
+    public function actionLoginSample()
+    {
+        $this->layout = 'main-sample'; //your layout name
+
+        if (!Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $model = new LoginForm();
+        if ($model->load(Yii::$app->request->post()) ) {
+            $post = Yii::$app->request->post();
+            $loginForm = $post['LoginForm'];
+
+            $responden = Responden::find()->where(['nama' => $loginForm['username']])->andWhere(['is_sample' => true])->one();
+            if(!$responden){
+                    throw new \yii\web\NotFoundHttpException("You Cannot Access This Page!");
+            }
+            $model->login();
+            return $this->redirect(['/responden/view-sample', 'id' => $responden->id]);
+
+            // return $this->goBack();
+        } else {
+            $model->password = '';
+
+            return $this->render('login-sample', [
+                'model' => $model,
+            ]);
+        }
+    }
 
     /**
      * Logs out the current user.
@@ -134,6 +170,13 @@ class SiteController extends Controller
      * @return mixed
      */
     public function actionLogout()
+    {
+        Yii::$app->user->logout();
+        return $this->redirect('home-training');
+
+        // return $this->goHome();
+    }
+    public function actionLogoutSample()
     {
         Yii::$app->user->logout();
         return $this->redirect('home');
@@ -194,6 +237,46 @@ class SiteController extends Controller
 
                 $responden->nama = $dataSignup['username'];
                 $responden->email = $dataSignup['email'];
+
+                if(!$responden->save()){
+                    return json_encode($responden->errors);
+                }
+                
+                $model->signup();
+                $transaction->commit();
+
+                Yii::$app->session->setFlash('success', 'Thank you for registration. Please Login.');
+                return $this->goHome();
+            }
+
+        } catch (\Exception $e) {
+            $transaction->rollback();
+            throw new Exception("gagal save");
+        }
+
+        return $this->render('signup', [
+            'model' => $model,
+        ]);
+    }
+
+    public function actionSignupSample()
+    {
+        $this->layout = 'main-sample'; //your layout name
+
+        $connection = \Yii::$app->db;
+
+        $transaction = $connection->beginTransaction();
+        $model = new SignupForm();
+        $responden = new Responden();
+
+        try {
+            if ($model->load(Yii::$app->request->post())) {
+                $post = Yii::$app->request->post();
+                $dataSignup  = $post['SignupForm'];
+
+                $responden->nama = $dataSignup['username'];
+                $responden->email = $dataSignup['email'];
+                $responden->is_sample = true;
 
                 if(!$responden->save()){
                     return json_encode($responden->errors);

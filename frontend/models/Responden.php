@@ -36,6 +36,8 @@ class Responden extends \yii\db\ActiveRecord
             [['nama', 'email'], 'required'],
             [['nama','no_telepon', 'email', 'ttl','jenis_kelamin'], 'required', 'on' => 'update'],
             [['cv', 'ijazah', 'portofolio'], 'file', 'skipOnEmpty' => false, 'extensions' => 'png, jpg, pdf', 'on' => 'update'],
+            [['is_sample'], 'boolean'],
+
         ];
     }
 
