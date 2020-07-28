@@ -286,7 +286,7 @@ class SiteController extends Controller
                 $transaction->commit();
 
                 Yii::$app->session->setFlash('success', 'Thank you for registration. Please Login.');
-                return $this->goHome();
+                return $this->redirect('login-sample');
             }
 
         } catch (\Exception $e) {
@@ -294,7 +294,7 @@ class SiteController extends Controller
             throw new Exception("gagal save");
         }
 
-        return $this->render('signup-sample', [
+        return $this->render('signup', [
             'model' => $model,
         ]);
     }

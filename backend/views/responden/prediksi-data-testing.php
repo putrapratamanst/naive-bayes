@@ -46,7 +46,9 @@ $totalSummaryP = round($total / $total * 100) . "%";
                                 $klarifikasiTidakLolos = false;
                                 $awalLolos = false;
                                 $klarifikasiLolos = false;
-                                foreach ($dataResultSample as $keydataResultSample => $valuedataResultSample) { ?>
+                                foreach ($dataResultSample as $keydataResultSample => $valuedataResultSample) {
+                                    
+                                    ?>
                                     <tr>
                                         <td><?= $valuedataResultSample['nama_responden'] ?></td>
 
@@ -104,6 +106,9 @@ $totalSummaryP = round($total / $total * 100) . "%";
 
                                                 break;
                                         }
+                                     
+
+
                                         if (($awalTidakLolos === true) && ($klarifikasiTidakLolos === true)) {
                                             $confusionTidakLolos++;
                                         }
@@ -113,12 +118,13 @@ $totalSummaryP = round($total / $total * 100) . "%";
                                         if (($awalLolos === true) && ($klarifikasiTidakLolos === true)) {
                                             $confusionLolosdanTidakLolos++;
                                         } 
-                                        if (($klarifikasiLolos === true) && ($awalTidakLolos === false)) {
+                                        if (($klarifikasiLolos === true) && ($awalTidakLolos === true)) {
                                             $confusionTidakLolosdanLolos++;
                                         } 
                                         ?>
                                     </tr>
-                                <?php } ;?>
+                                <?php } ;
+                                ?>
                             </tbody>
                         </table>
                     </div>
