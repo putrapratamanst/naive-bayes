@@ -20,9 +20,9 @@
                         <?php
 
                         //-- menampilkan data secara literal
+                       
                         foreach ($data as $id_responden => $dt_atribut) {
                             echo "<tr><td>{$responden[$id_responden]}</td>";
-
                             for ($i = 1; $i <= $jml_atribut; $i++) {
 
                                 echo "<td>{$parameter[$i][$dt_atribut[$i]]}</td>";

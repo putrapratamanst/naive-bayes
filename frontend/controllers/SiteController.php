@@ -294,7 +294,7 @@ class SiteController extends Controller
             throw new Exception("gagal save");
         }
 
-        return $this->render('signup', [
+        return $this->render('signup-sample', [
             'model' => $model,
         ]);
     }
