@@ -8,9 +8,10 @@ $provider = new ArrayDataProvider([
     'allModels' => $countFrequensi,
 ]);
 $total = $countFrequensi[0]['count'] + $countFrequensi[1]['count'];
-$totalLulus = $countFrequensi[0]['count'] / 100;
-$totalTidakLulus = $countFrequensi[1]['count'] / 100;
+$totalLulus = $countFrequensi[0]['count'] / $total;
+$totalTidakLulus = $countFrequensi[1]['count'] / $total;
 $totalSummaryP = round($total / $total * 100) . "%";
+
 ?>
 <div class="col-md-12">
     <div class="x_panel">
@@ -47,6 +48,7 @@ $totalSummaryP = round($total / $total * 100) . "%";
                                 $awalLolos = false;
                                 $klarifikasiLolos = false;
                                 foreach ($dataResultSample as $keydataResultSample => $valuedataResultSample) {
+                                   
                                     
                                     ?>
                                     <tr>
@@ -88,8 +90,10 @@ $totalSummaryP = round($total / $total * 100) . "%";
                                                 }
                                             }
                                         }
-                                        echo "<td>" . number_format($lulus * $totalLulus * 100, 2)  .  "%</td>";
-                                        echo "<td>" . number_format($tidaklulus * $totalTidakLulus * 100, 2) . "%</td>";
+                                        // echo "<td>" . $lulus   .  "</td>";
+                                        // echo "<td>" . $tidaklulus . "</td>";
+                                        echo "<td>" . round(($lulus * $totalLulus) * 100)  .  "%</td>";
+                                        echo "<td>" . round(($tidaklulus * $totalTidakLulus) * 100) . "%</td>";
 
                                         switch (true) {
                                             case $lulus > $tidaklulus:
@@ -123,7 +127,7 @@ $totalSummaryP = round($total / $total * 100) . "%";
                                         } 
                                         ?>
                                     </tr>
-                                <?php } ;
+                                <?php }
                                 ?>
                             </tbody>
                         </table>
