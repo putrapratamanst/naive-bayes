@@ -1,7 +1,8 @@
 <?php
 
-$host = $username = $password = $dbname = '';
-
+$host = "us-cdbr-east-02.cleardb.com"; $username = "b69be514efb743";
+$password = "14b6375d";
+$dbname = 'heroku_26ea45a40b05d83';
 $url = parse_url(getenv("CLEARDB_DATABASE_URL"));
 if (isset($url["host"]) && isset($url["user"]) && isset($url["pass"]) && isset($url["path"])) {
     $host = $url["host"];
