@@ -10,6 +10,7 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use common\models\LoginForm;
+use common\models\User;
 use Exception;
 use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
@@ -66,9 +67,40 @@ class SiteController extends Controller
                 'class' => 'yii\captcha\CaptchaAction',
                 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
             ],
+            'auth' => [
+                'class' => 'yii\authclient\AuthAction',
+                'successCallback' => [$this, 'successCallback']
+            ],
         ];
     }
 
+    public function successCallback($client){
+        $attributes = $client->getUserAttributes();
+        $safe_attributes = [
+            'social_media' => '',
+            'id' => '',
+            'username' => '',
+            'name' => '',
+            'email' => '',
+        ];
+
+        if($client instanceof \yii\authclient\clients\Google){
+            $safe_attributes = [
+                'social_media' => 'google',
+                'id' => $attributes['id'],
+                'username' => $attributes['emails'][0]['value'],
+                'name' => $attributes['displayName'],
+                'username' => $attributes['emails'][0]['value'],
+            ];
+        }
+
+        $checkUser = User::find()->where(['email' => $attributes['emails'][0]['value'] ])->one();
+        if($checkUser){
+            Yii::$app->user->login($checkUser);
+        }
+
+        return $safe_attributes;
+    }
     public function actionHome()
     {
         $this->layout = 'main2';

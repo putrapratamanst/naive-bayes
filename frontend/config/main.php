@@ -13,6 +13,16 @@ return [
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
     'components' => [
+        'authClientCollection' => [
+            'class' => 'yii\authclient\Collection',
+            'clients' => [
+                'google' => [
+                    'class' => 'yii\authclient\clients\Google',
+                    'clientId' => '714817319239-98tlqfq9ka9cur9rquda5kpli23b23jd.apps.googleusercontent.com',
+                    'clientSecret' => 'c7UOjfsdtfAi42LVT8sCa2OX',
+                ],
+            ],
+        ],
         'request' => [
             'csrfParam' => '_csrf-frontend',
         ],
