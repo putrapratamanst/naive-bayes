@@ -402,11 +402,11 @@ class DataTrainingController extends Controller
 
         $pilihan = isset($post['pilihan']) ? $post['pilihan'] : [];
         if (count($pilihan) < 10) {
-            Yii::$app->session->setFlash('danger', "Anda belum menyelesaikan Psikotes!");
+            Yii::$app->session->setFlash('danger', "Anda belum menyelesaikan IQ!");
             return $this->redirect(['create-psikotes', 'id' => $idResponden]);
         }
 
-        $hasilPsikotes = 0;
+        $hasilIq = 0;
         foreach ($pilihan as $key => $pilihans) {
             $salahBenar = Pilihan::find()
                 ->select('benar_salah')
@@ -426,7 +426,7 @@ class DataTrainingController extends Controller
                 die;
             }
             if ($salahBenar['benar_salah'] == 1) {
-                $hasilPsikotes = $hasilPsikotes + 10;
+                $hasilIq = $hasilIq + 10;
             }
         }
 
@@ -434,7 +434,7 @@ class DataTrainingController extends Controller
             ->where(['id_responden' => $idResponden])
             ->andWhere((['id_attribute' => 6]))
             ->one();
-        if ($hasilPsikotes > 50) {
+        if ($hasilIq > 110) {
             $dataTraining->id_parameter = 16;
             $dataTraining->save(false);
         } else {

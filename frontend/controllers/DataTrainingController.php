@@ -473,7 +473,7 @@ class DataTrainingController extends Controller
         $pilihan = isset($post['pilihan']) ? $post['pilihan'] : [];
         if(count($pilihan) < 10){
             Yii::$app->session->setFlash('danger', "Anda belum menyelesaikan Psikotes!");
-            return $this->redirect(['create-psikotes', 'id' => $idResponden]);
+            return $this->redirect(['create-psikotes-sample', 'id' => $idResponden]);
         }
 
         $hasilPsikotes = 0;
@@ -559,8 +559,8 @@ class DataTrainingController extends Controller
 
         $pilihan = isset($post['pilihan']) ? $post['pilihan'] : [];
         if (count($pilihan) < 10) {
-            Yii::$app->session->setFlash('danger', "Anda belum menyelesaikan Psikotes!");
-            return $this->redirect(['create-psikotes', 'id' => $idResponden]);
+            Yii::$app->session->setFlash('danger', "Anda belum menyelesaikan IQ!");
+            return $this->redirect(['create-iq', 'id' => $idResponden]);
         }
 
         $hasilPsikotes = 0;
@@ -611,11 +611,11 @@ class DataTrainingController extends Controller
 
         $pilihan = isset($post['pilihan']) ? $post['pilihan'] : [];
         if (count($pilihan) < 10) {
-            Yii::$app->session->setFlash('danger', "Anda belum menyelesaikan Psikotes!");
+            Yii::$app->session->setFlash('danger', "Anda belum menyelesaikan IQ!");
             return $this->redirect(['create-psikotes', 'id' => $idResponden]);
         }
 
-        $hasilPsikotes = 0;
+        $hasilIqSample = 0;
         foreach ($pilihan as $key => $pilihans) {
             $salahBenar = Pilihan::find()
                 ->select('benar_salah')
@@ -633,7 +633,7 @@ class DataTrainingController extends Controller
                 echo"<pre>";print_r($jawaban->errors);die;
             }
             if ($salahBenar['benar_salah'] == 1) {
-                $hasilPsikotes = $hasilPsikotes + 10;
+                $hasilIqSample = $hasilIqSample + 10;
             }
         }
 
@@ -641,7 +641,7 @@ class DataTrainingController extends Controller
             ->where(['id_responden' => $idResponden])
             ->andWhere((['id_attribute' => 6]))
             ->one();
-        if ($hasilPsikotes > 50) {
+        if ($hasilIqSample > 50) {
             $dataSample->id_parameter = 16;
             $dataSample->save(false);
         } else {
