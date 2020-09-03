@@ -32,7 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
         <div class="col-lg-5">
-             <!-- yii\authclient\widgets\AuthChoice::widget([
+             <?= yii\authclient\widgets\AuthChoice::widget([
                 'baseAuthUrl' => ['site/auth']
             ])
             ?> -->
