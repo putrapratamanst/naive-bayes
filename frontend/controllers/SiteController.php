@@ -83,7 +83,7 @@ class SiteController extends Controller
             'name' => '',
             'email' => '',
         ];
-
+        echo"<pre>";print_r($attributes);die;
         if($client instanceof \yii\authclient\clients\Google){
             $safe_attributes = [
                 'social_media' => 'google',
@@ -417,7 +417,7 @@ class SiteController extends Controller
             if ($model->sendEmail()) {
                 Yii::$app->session->setFlash('success', 'Check your email for further instructions.');
                 return $this->goHome();
-            }
+               }
             Yii::$app->session->setFlash('error', 'Sorry, we are unable to resend verification email for the provided email address.');
         }
 
