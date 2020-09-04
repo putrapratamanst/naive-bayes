@@ -93,7 +93,7 @@ class SiteController extends Controller
             ];
         }
 
-        $checkUser = User::find()->where(['email' => $attributes['emails'][0]['value'] ])->one();
+        $checkUser = User::find()->where(['email' => $attributes['email'] ])->one();
         if($checkUser){
             Yii::$app->user->login($checkUser);
         }
