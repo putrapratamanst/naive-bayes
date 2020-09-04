@@ -83,14 +83,13 @@ class SiteController extends Controller
             'name' => '',
             'email' => '',
         ];
-        echo"<pre>";print_r($attributes);die;
         if($client instanceof \yii\authclient\clients\Google){
             $safe_attributes = [
                 'social_media' => 'google',
                 'id' => $attributes['id'],
-                'username' => $attributes['emails'][0]['value'],
-                'name' => $attributes['displayName'],
-                'username' => $attributes['emails'][0]['value'],
+                'username' => $attributes['email'],
+                'name' => $attributes['name'],
+                'username' => $attributes['email'],
             ];
         }
 
